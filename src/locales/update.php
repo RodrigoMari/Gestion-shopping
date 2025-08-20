@@ -11,9 +11,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $resultado = modificarLocal($conn, $id_local, $nombre, $ubicacion, $rubro, $usuario);
 
     if ($resultado === true) {
-        echo "Local creado con éxito.";
+        echo "Local modificado con éxito.";
     } else {
-        echo $resultado; // muestra error
+        echo $resultado;
     }
 }
 ?>

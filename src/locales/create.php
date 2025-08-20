@@ -12,7 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($resultado === true) {
         echo "Local creado con éxito.";
     } else {
-        echo $resultado; // muestra error
+        echo $resultado;
     }
 }
 ?>

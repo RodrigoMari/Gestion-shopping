@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../../config/database.php'; // conexión
+require_once __DIR__ . '/../../config/database.php';
 
 function crearLocal($conn, $nombre_local, $ubicacion, $rubro, $id_usuario) {
     $sql = "INSERT INTO locales (nombreLocal, ubicacionLocal, rubroLocal, codUsuario) 
@@ -31,3 +31,5 @@ function modificarLocal($conn, $id_local, $nombre_local, $ubicacion, $rubro, $id
         return "Error: " . $conn->error;
     }
 }
+
+?>
