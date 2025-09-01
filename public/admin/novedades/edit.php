@@ -149,7 +149,7 @@ if (isset($_GET['id'])) {
               </div>
 
               <div class="d-flex gap-3 justify-content-end mt-4 pt-3 border-top">
-                <a href="index.php" class="btn btn-outline-secondary btn-lg">
+                <a href="novedades.php" class="btn btn-outline-secondary btn-lg">
                   <i class="fas fa-times me-2"></i>Cancelar
                 </a>
                 <button type="submit" class="btn btn-warning btn-lg">

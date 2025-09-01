@@ -11,7 +11,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $resultado = modificarLocal($conn, $id_local, $nombre, $ubicacion, $rubro, $usuario);
 
     if ($resultado === true) {
-        echo "Local modificado con éxito.";
+        header("Location: /gestion-shopping/public/admin/locales/locales.php");
     } else {
         echo $resultado;
     }

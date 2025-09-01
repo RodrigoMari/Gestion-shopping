@@ -11,7 +11,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $resultado = modificarNovedad($conn, $id_novedad, $texto_novedad, $fecha_desde, $fecha_hasta, $tipo_usuario);
 
     if ($resultado === true) {
-        echo "Novedad modificada con éxito.";
+        header("Location: /gestion-shopping/public/admin/novedades/novedades.php");
+        exit;
     } else {
         echo $resultado;
     }
