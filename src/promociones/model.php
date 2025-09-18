@@ -13,6 +13,19 @@ function getAllPromociones($conn)
     }
 }
 
+function getPromocionesActivasCount($conn)
+{
+    $sql = "SELECT COUNT(*) AS total FROM promociones WHERE estadoPromo = 'aprobada' AND fechaHastaPromo >= CURDATE()";
+    $result = $conn->query($sql);
+
+    if ($result) {
+        $row = $result->fetch_assoc();
+        return $row['total'];
+    } else {
+        return "Error: " . $conn->error;
+    }
+}
+
 function validarPromocion($conn, $id_promocion, $opcion)
 {
     if ($opcion == 1) {

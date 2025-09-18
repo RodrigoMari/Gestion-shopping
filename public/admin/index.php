@@ -49,7 +49,7 @@ $promociones = getAllPromociones($conn);
         <a href="<?= BASE_URL ?>public/admin/locales/locales.php" class="sidebar-link">
           <i class="fas fa-store"></i> Locales
         </a>
-        <a href="promociones/" class="sidebar-link">
+        <a href="<?= BASE_URL ?>public/admin/promociones/promociones.php" class="sidebar-link">
           <i class="fas fa-tag"></i> Promociones
         </a>
         <a href="<?= BASE_URL ?>public/admin/novedades/novedades.php" class="sidebar-link">

@@ -47,6 +47,32 @@ function getAllLocales($conn)
     }
 }
 
+function getLocalesPropietariosCount($conn)
+{
+    $sql = "SELECT COUNT(DISTINCT codUsuario) AS total FROM locales";
+    $result = $conn->query($sql);
+
+    if ($result) {
+        $row = $result->fetch_assoc();
+        return $row['total'];
+    } else {
+        return "Error: " . $conn->error;
+    }
+}
+
+function getLocalesRubrosCount($conn)
+{
+    $sql = "SELECT COUNT(DISTINCT rubroLocal) AS total FROM locales";
+    $result = $conn->query($sql);
+
+    if ($result) {
+        $row = $result->fetch_assoc();
+        return $row['total'];
+    } else {
+        return "Error: " . $conn->error;
+    }
+}
+
 function getLocalById($conn, $id_local)
 {
     $sql = "SELECT * FROM locales WHERE codLocal = $id_local";

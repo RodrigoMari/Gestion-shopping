@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/model.php';
+require_once __DIR__ . '/../../config/config.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nombre   = $_POST['nombre_local'];
@@ -10,7 +11,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $resultado = crearLocal($conn, $nombre, $ubicacion, $rubro, $usuario);
 
     if ($resultado === true) {
-        echo "Local creado con éxito.";
+        header("Location: " . PUBLIC_URL . "admin/locales/locales.php");
+        exit();
     } else {
         echo $resultado;
     }

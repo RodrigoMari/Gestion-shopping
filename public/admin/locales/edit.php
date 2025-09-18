@@ -126,7 +126,7 @@ if (isset($_GET['id'])) {
                   <select class="form-select form-select-lg" id="rubro" name="rubro" required>
                     <option value="">Seleccione un rubro</option>
                     <?php
-                    $rubros = ['indumentaria', 'perfumería', 'óptica', 'comida', 'etc'];
+                    $rubros = ['indumentaria', 'perfumeria', 'optica', 'comida', 'etc'];
                     $rubroActual = isset($_POST['rubro']) ? $_POST['rubro'] : $local['rubroLocal'];
                     foreach ($rubros as $rubro):
                     ?>

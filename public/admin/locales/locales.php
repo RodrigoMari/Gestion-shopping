@@ -3,6 +3,8 @@ require_once __DIR__ . '../../../../config/database.php';
 require_once __DIR__ . '/../../../src/locales/model.php';
 
 $locales = getAllLocales($conn);
+$propietariosCount = getLocalesPropietariosCount($conn);
+$rubrosCount = getLocalesRubrosCount($conn);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -77,7 +79,7 @@ $locales = getAllLocales($conn);
         <div class="card text-center shadow-sm border-0">
           <div class="card-body">
             <i class="fas fa-tags fa-2x text-info mb-2"></i>
-            <h4 class="fw-bold">--</h4>
+            <h4 class="fw-bold"><?= $rubrosCount ?></h4>
             <p class="text-muted mb-0">Rubros</p>
           </div>
         </div>
@@ -86,7 +88,7 @@ $locales = getAllLocales($conn);
         <div class="card text-center shadow-sm border-0">
           <div class="card-body">
             <i class="fas fa-users fa-2x text-primary mb-2"></i>
-            <h4 class="fw-bold">--</h4>
+            <h4 class="fw-bold"><?= $propietariosCount ?></h4>
             <p class="text-muted mb-0">Propietarios</p>
           </div>
         </div>

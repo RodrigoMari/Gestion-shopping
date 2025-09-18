@@ -3,6 +3,7 @@ require_once __DIR__ . '../../../../config/database.php';
 require_once __DIR__ . '/../../../src/novedades/model.php';
 
 $novedades = getAllNovedades($conn);
+$novedadesVigentes = obtenerNovedadesVigentes($conn);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -68,7 +69,7 @@ $novedades = getAllNovedades($conn);
         <div class="card text-center shadow-sm border-0">
           <div class="card-body">
             <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
-            <h4 class="fw-bold">--</h4>
+            <h4 class="fw-bold"><?= $novedadesVigentes->num_rows ?></h4>
             <p class="text-muted mb-0">Novedades Activas</p>
           </div>
         </div>

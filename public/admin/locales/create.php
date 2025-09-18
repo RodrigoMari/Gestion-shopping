@@ -1,5 +1,5 @@
 <?php
-$success = isset($_GET['success']) ? 'Local creado con éxito.' : null;
+//$success = isset($_GET['success']) ? 'Local creado con éxito.' : null;
 $error = isset($_GET['error']) ? urldecode($_GET['error']) : null;
 ?>
 <!DOCTYPE html>
@@ -93,8 +93,8 @@ $error = isset($_GET['error']) ? urldecode($_GET['error']) : null;
                   <select class="form-select form-select-lg" id="rubro" name="rubro" required>
                     <option value="">Seleccione un rubro</option>
                     <option value="indumentaria" <?= (isset($_POST['rubro']) && $_POST['rubro'] == 'indumentaria') ? 'selected' : '' ?>>Indumentaria</option>
-                    <option value="perfumería" <?= (isset($_POST['rubro']) && $_POST['rubro'] == 'perfumería') ? 'selected' : '' ?>>Perfumería</option>
-                    <option value="óptica" <?= (isset($_POST['rubro']) && $_POST['rubro'] == 'óptica') ? 'selected' : '' ?>>Óptica</option>
+                    <option value="perfumeria" <?= (isset($_POST['rubro']) && $_POST['rubro'] == 'perfumeria') ? 'selected' : '' ?>>Perfumería</option>
+                    <option value="optica" <?= (isset($_POST['rubro']) && $_POST['rubro'] == 'optica') ? 'selected' : '' ?>>Óptica</option>
                     <option value="comida" <?= (isset($_POST['rubro']) && $_POST['rubro'] == 'comida') ? 'selected' : '' ?>>Comida</option>
                     <option value="etc" <?= (isset($_POST['rubro']) && $_POST['rubro'] == 'etc') ? 'selected' : '' ?>>Otros</option>
                   </select>
@@ -118,7 +118,7 @@ $error = isset($_GET['error']) ? urldecode($_GET['error']) : null;
                 <a href="locales.php" class="btn btn-outline-secondary btn-lg">
                   <i class="fas fa-times me-2"></i>Cancelar
                 </a>
-                <button type="submit" class="btn btn-warning btn-lg">
+                <button href="locales.php" type="submit" class="btn btn-warning btn-lg">
                   <i class="fas fa-save me-2"></i>Crear Local
                 </button>
               </div>
