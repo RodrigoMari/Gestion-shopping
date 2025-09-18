@@ -3,11 +3,20 @@
 
 require_once __DIR__ . '../../../config/database.php';
 require_once __DIR__ . '../../../config/config.php';
+require_once __DIR__ . '/../../src/locales/model.php';
+require_once __DIR__ . '/../../src/novedades/model.php';
+require_once __DIR__ . '/../../src/promociones/model.php';
+require_once __DIR__ . '/../../src/usuarios/model.php';
 
 // if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
 //   header("Location: ../login.php");
 //   exit();
 // }
+
+$locales = getAllLocales($conn);
+$novedades = getAllNovedades($conn);
+$promociones = getAllPromociones($conn);
+//acciones???
 ?>
 
 <!DOCTYPE html>
@@ -89,7 +98,7 @@ require_once __DIR__ . '../../../config/config.php';
                   <div class="d-flex justify-content-between align-items-center">
                     <div>
                       <h6 class="text-muted mb-2">Locales Activos</h6>
-                      <h3 class="mb-0">42</h3>
+                      <h3 class="mb-0"><?= $locales->num_rows ?></h3>
                     </div>
                     <div class="card-icon bg-light rounded-circle p-3">
                       <i class="fas fa-store"></i>
@@ -105,7 +114,7 @@ require_once __DIR__ . '../../../config/config.php';
                   <div class="d-flex justify-content-between align-items-center">
                     <div>
                       <h6 class="text-muted mb-2">Promociones Activas</h6>
-                      <h3 class="mb-0">18</h3>
+                      <h3 class="mb-0"><?= $promociones->num_rows ?></h3>
                     </div>
                     <div class="card-icon bg-light rounded-circle p-3">
                       <i class="fas fa-tag"></i>
@@ -121,7 +130,7 @@ require_once __DIR__ . '../../../config/config.php';
                   <div class="d-flex justify-content-between align-items-center">
                     <div>
                       <h6 class="text-muted mb-2">Novedades</h6>
-                      <h3 class="mb-0">5</h3>
+                      <h3 class="mb-0"><?= $novedades->num_rows ?></h3>
                     </div>
                     <div class="card-icon bg-light rounded-circle p-3">
                       <i class="fas fa-newspaper"></i>

@@ -1,6 +1,18 @@
 <?php
 include_once __DIR__ . '/../../config/database.php';
 
+function getAllPromociones($conn)
+{
+    $sql = "SELECT * FROM promociones ORDER BY codPromo ASC";
+    $result = $conn->query($sql);
+
+    if ($result) {
+        return $result;
+    } else {
+        return "Error: " . $conn->error;
+    }
+}
+
 function validarPromocion($conn, $id_promocion, $opcion)
 {
     if ($opcion == 1) {

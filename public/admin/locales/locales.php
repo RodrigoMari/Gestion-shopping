@@ -54,7 +54,7 @@ $locales = getAllLocales($conn);
               <?php
               if (is_object($locales)) {
                 echo $locales->num_rows;
-                $locales->data_seek(0); // Reset pointer
+                $locales->data_seek(0);
               } else {
                 echo '0';
               }
