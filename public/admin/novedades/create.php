@@ -1,5 +1,5 @@
 <?php
-$success = isset($_GET['success']) ? 'Novedad creada con éxito.' : null;
+//$success = isset($_GET['success']) ? 'Novedad creada con éxito.' : null;
 $error = isset($_GET['error']) ? urldecode($_GET['error']) : null;
 ?>
 <!DOCTYPE html>
@@ -39,13 +39,6 @@ $error = isset($_GET['error']) ? urldecode($_GET['error']) : null;
             </h5>
           </div>
           <div class="card-body p-4">
-
-            <?php if (isset($success)): ?>
-              <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="fas fa-check-circle me-2"></i><?= $success ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-              </div>
-            <?php endif; ?>
 
             <?php if (isset($error)): ?>
               <div class="alert alert-danger alert-dismissible fade show" role="alert">

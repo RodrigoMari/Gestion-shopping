@@ -7,7 +7,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $resultado = borrarLocal($conn, $id_local);
 
     if ($resultado === true) {
-        echo "Local eliminado con éxito.";
+        header("Location: /gestion-shopping/public/admin/locales/locales.php");
     } else {
         echo $resultado;
     }

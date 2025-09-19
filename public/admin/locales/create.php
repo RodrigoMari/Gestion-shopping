@@ -118,7 +118,7 @@ $error = isset($_GET['error']) ? urldecode($_GET['error']) : null;
                 <a href="locales.php" class="btn btn-outline-secondary btn-lg">
                   <i class="fas fa-times me-2"></i>Cancelar
                 </a>
-                <button href="locales.php" type="submit" class="btn btn-warning btn-lg">
+                <button type="submit" class="btn btn-warning btn-lg">
                   <i class="fas fa-save me-2"></i>Crear Local
                 </button>
               </div>

@@ -7,7 +7,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $resultado = borrarNovedad($conn, $id_novedad);
 
     if ($resultado === true) {
-        echo "Novedad eliminada con éxito.";
+        header("Location: /gestion-shopping/public/admin/novedades/novedades.php");
+        exit;
     } else {
         echo $resultado;
     }

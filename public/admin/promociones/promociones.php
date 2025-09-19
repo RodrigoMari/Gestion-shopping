@@ -98,6 +98,8 @@ $promosActivasCount = getPromocionesActivasCount($conn);
                     <td>
                       <?php if ($promo['estadoPromo'] === 'aprobada'): ?>
                         <span class="badge bg-success text-white"><?= $promo['estadoPromo'] ?></span>
+                      <?php elseif ($promo['estadoPromo'] === 'pendiente'): ?>
+                        <span class="badge bg-warning text-white"><?= $promo['estadoPromo'] ?></span>
                       <?php else: ?>
                         <span class="badge bg-danger text-white"><?= $promo['estadoPromo'] ?></span>
                       <?php endif; ?>
