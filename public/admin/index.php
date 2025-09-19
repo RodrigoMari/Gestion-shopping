@@ -1,5 +1,4 @@
 <?php
-// session_start();
 
 require_once __DIR__ . '../../../config/database.php';
 require_once __DIR__ . '../../../config/config.php';
@@ -7,11 +6,6 @@ require_once __DIR__ . '/../../src/locales/model.php';
 require_once __DIR__ . '/../../src/novedades/model.php';
 require_once __DIR__ . '/../../src/promociones/model.php';
 require_once __DIR__ . '/../../src/usuarios/model.php';
-
-// if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
-//   header("Location: ../login.php");
-//   exit();
-// }
 
 $locales = getAllLocales($conn);
 $novedades = getAllNovedades($conn);
@@ -43,19 +37,19 @@ $promociones = getAllPromociones($conn);
         <small>Panel de Administración</small>
       </div>
       <div class="mt-4">
-        <a href="<?= BASE_URL ?>public/admin/index.php" class="sidebar-link active">
+        <a href="<?= PUBLIC_URL ?>admin/index.php" class="sidebar-link active">
           <i class="fas fa-tachometer-alt"></i> Dashboard
         </a>
-        <a href="<?= BASE_URL ?>public/admin/locales/locales.php" class="sidebar-link">
+        <a href="<?= PUBLIC_URL ?>admin/locales/locales.php" class="sidebar-link">
           <i class="fas fa-store"></i> Locales
         </a>
-        <a href="<?= BASE_URL ?>public/admin/promociones/promociones.php" class="sidebar-link">
+        <a href="<?= PUBLIC_URL ?>admin/promociones/promociones.php" class="sidebar-link">
           <i class="fas fa-tag"></i> Promociones
         </a>
-        <a href="<?= BASE_URL ?>public/admin/novedades/novedades.php" class="sidebar-link">
+        <a href="<?= PUBLIC_URL ?>admin/novedades/novedades.php" class="sidebar-link">
           <i class="fas fa-newspaper"></i> Novedades
         </a>
-        <a href="usuarios/" class="sidebar-link">
+        <a href="<?= PUBLIC_URL ?>admin/usuarios/usuarios.php" class="sidebar-link">
           <i class="fas fa-users"></i> Usuarios
         </a>
         <hr class="bg-secondary mx-3">
@@ -202,7 +196,7 @@ $promociones = getAllPromociones($conn);
             </div>
 
             <div class="col-md-6 col-lg-3 mb-4">
-              <a href="usuarios/" class="card admin-card h-100 text-decoration-none">
+              <a href="usuarios/usuarios.php" class="card admin-card h-100 text-decoration-none">
                 <div class="card-body text-center">
                   <div class="card-icon">
                     <i class="fas fa-user-plus"></i>
@@ -260,13 +254,11 @@ $promociones = getAllPromociones($conn);
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    // Activar tooltips
     var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
     var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
       return new bootstrap.Tooltip(tooltipTriggerEl)
     });
 
-    // Mobile sidebar toggle
     document.querySelector('.btn-secondary.d-md-none').addEventListener('click', function() {
       document.querySelector('.sidebar').classList.toggle('d-none');
     });

@@ -1,4 +1,7 @@
-<?php require_once __DIR__ . "/../config/config.php"; ?>
+<?php
+require_once __DIR__ . "/../config/config.php";
+$currentPage = basename($_SERVER['PHP_SELF']);
+?>
 <header class="custom-header">
   <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container">
@@ -12,14 +15,15 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
           <li class="nav-item">
-            <a class="nav-link active fw-semibold" aria-current="page" href="<?= BASE_URL ?>public/index.php">Inicio</a>
+            <a class="nav-link fw-semibold <?= ($currentPage == 'index.php') ? 'active' : '' ?>" aria-current="page" href="<?= BASE_URL ?>public/index.php">Inicio</a>
           </li>
-          <!-- DESPUES OCULTAR PARA NO ADMINS -->
+          <?php if (isset($_SESSION['tipoUsuario']) && $_SESSION['tipoUsuario'] === 'administrador'): ?>
+            <li class="nav-item">
+              <a class="nav-link fw-semibold" href="<?= PUBLIC_URL ?>admin/index.php">Dashboard</a>
+            </li>
+          <?php endif; ?>
           <li class="nav-item">
-            <a class="nav-link fw-semibold" aria-current="page" href="<?= BASE_URL ?>public/admin/index.php">ADMIN</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link fw-semibold" href="#promociones">Promociones</a>
+            <a class="nav-link fw-semibold <?= ($currentPage == 'promociones.php') ? 'active' : '' ?>" href="<?= BASE_URL ?>public/promociones.php">Promociones</a>
           </li>
           <li class="nav-item">
             <a class="nav-link fw-semibold" href="#">Locales</a>
@@ -29,15 +33,29 @@
           </li>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle fw-semibold" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Mi Cuenta
+              <?php if (isset($_SESSION['codUsuario'])): ?>
+                <?= ucfirst($_SESSION['tipoUsuario']) ?>
+              <?php else: ?>
+                Mi Cuenta
+              <?php endif; ?>
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <li><a class="dropdown-item" href="login.php">Iniciar Sesión</a></li>
-              <li><a class="dropdown-item" href="registro.php">Registrarse</a></li>
-              <li>
-                <hr class="dropdown-divider">
-              </li>
-              <li><a class="dropdown-item" href="#">Panel de Usuario</a></li>
+              <?php if (!isset($_SESSION['codUsuario'])): ?>
+                <li><a class="dropdown-item" href="<?= PUBLIC_URL ?>login.php">Iniciar Sesión</a></li>
+                <li><a class="dropdown-item" href="<?= PUBLIC_URL ?>registro.php">Registrarse</a></li>
+              <?php else: ?>
+                <?php if ($_SESSION['tipoUsuario'] === 'administrador'): ?>
+                  <li><a class="dropdown-item" href="<?= PUBLIC_URL ?>admin/index.php">Panel Admin</a></li>
+                <?php elseif ($_SESSION['tipoUsuario'] === 'dueño de local'): ?>
+                  <li><a class="dropdown-item" href="<?= PUBLIC_URL ?>locales/index.php">Panel Local</a></li>
+                <?php else: ?>
+                  <li><a class="dropdown-item" href="<?= PUBLIC_URL ?>usuario/panel.php">Panel Usuario</a></li>
+                <?php endif; ?>
+                <li>
+                  <hr class="dropdown-divider">
+                </li>
+                <li><a class="dropdown-item" href="<?= PUBLIC_URL ?>logout.php">Cerrar Sesión</a></li>
+              <?php endif; ?>
             </ul>
           </li>
         </ul>

@@ -2,15 +2,15 @@
 require_once __DIR__ . '/model.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $id_promocion  = $_POST['id_promocion'];
+    $id_promocion = (int) $_POST['id_promocion'];
     $opcion = $_POST['opcion'];
 
     $resultado = validarPromocion($conn, $id_promocion, $opcion);
 
-    if ($resultado === true) {
-        echo "Promoción validada con éxito.";
+    if ($resultado) {
+        header("Location: ../../public/admin/promociones/promociones.php?msg=ok");
     } else {
-        echo $resultado;
+        header("Location: ../../public/admin/promociones/promociones.php?msg=error");
     }
+    exit();
 }
-?>

@@ -4,6 +4,17 @@ require_once __DIR__ . '/../../../src/promociones/model.php';
 
 $promociones = getAllPromociones($conn);
 $promosActivasCount = getPromocionesActivasCount($conn);
+
+$diasSemanaMap = [
+  0 => 'Domingo',
+  1 => 'Lunes',
+  2 => 'Martes',
+  3 => 'Miércoles',
+  4 => 'Jueves',
+  5 => 'Viernes',
+  6 => 'Sábado'
+];
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -13,8 +24,11 @@ $promosActivasCount = getPromocionesActivasCount($conn);
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Administrar Promociones - Rosario Center</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-  <link rel="stylesheet" href="../../../css/style.css">
+  <link rel="stylesheet" href="../../css/style.css">
 </head>
 
 <body>
@@ -29,16 +43,11 @@ $promosActivasCount = getPromocionesActivasCount($conn);
       </ol>
     </nav>
 
-    <!-- Título y botón de acción -->
+    <!-- Título -->
     <div class="row mb-4">
       <div class="col-md-8">
         <h2 class="fw-bold text-dark">Administración de Promociones</h2>
-        <p class="text-muted">Gestiona todas las promociones disponibles en el centro comercial</p>
-      </div>
-      <div class="col-md-4 text-end">
-        <a href="create.php" class="btn btn-warning btn-lg">
-          <i class="fas fa-plus me-2"></i>Nueva Promoción
-        </a>
+        <p class="text-muted">Aprueba o deniega las promociones creadas por los dueños de locales.</p>
       </div>
     </div>
 
@@ -58,11 +67,10 @@ $promosActivasCount = getPromocionesActivasCount($conn);
           <div class="card-body">
             <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
             <h4 class="fw-bold"><?= $promosActivasCount ?></h4>
-            <p class="text-muted mb-0">Promociones Activas</p>
+            <p class="text-muted mb-0">Promociones Aprobadas</p>
           </div>
         </div>
       </div>
-      <!-- Puedes agregar otras estadísticas si quieres -->
     </div>
 
     <!-- Tabla de promociones -->
@@ -73,49 +81,49 @@ $promosActivasCount = getPromocionesActivasCount($conn);
       <div class="card-body p-0">
         <?php if (is_object($promociones) && $promociones->num_rows > 0): ?>
           <div class="table-responsive">
-            <table class="table table-hover mb-0">
+            <table class="table table-hover table-sm align-middle mb-0">
               <thead class="table-light">
                 <tr>
-                  <th class="fw-semibold">ID</th>
-                  <th class="fw-semibold">Promoción</th>
-                  <th class="fw-semibold">Desde</th>
-                  <th class="fw-semibold">Hasta</th>
-                  <th class="fw-semibold">Categoría</th>
-                  <th class="fw-semibold">Días Semana</th>
-                  <th class="fw-semibold">Estado</th>
-                  <th class="fw-semibold text-center">Acciones</th>
+                  <th>ID</th>
+                  <th>Promoción</th>
+                  <th>Local</th>
+                  <th class="text-nowrap">Desde</th>
+                  <th class="text-nowrap">Hasta</th>
+                  <th>Categoría</th>
+                  <th>Día</th>
+                  <th>Estado</th>
+                  <th class="text-center">Acciones</th>
                 </tr>
               </thead>
               <tbody>
                 <?php while ($promo = $promociones->fetch_assoc()): ?>
                   <tr>
-                    <td class="fw-semibold text-primary">#<?= $promo['codPromo'] ?></td>
+                    <td>#<?= $promo['codPromo'] ?></td>
                     <td><?= htmlspecialchars($promo['textoPromo']) ?></td>
-                    <td><?= htmlspecialchars($promo['fechaDesdePromo']) ?></td>
-                    <td><?= htmlspecialchars($promo['fechaHastaPromo']) ?></td>
-                    <td><?= htmlspecialchars($promo['categoriaCliente']) ?></td>
-                    <td><?= htmlspecialchars($promo['diasSemana']) ?></td>
+                    <td><?= htmlspecialchars($promo['nombreLocal']) ?></td>
+                    <td class="text-nowrap"><?= date('d/m/Y', strtotime($promo['fechaDesdePromo'])) ?></td>
+                    <td class="text-nowrap"><?= date('d/m/Y', strtotime($promo['fechaHastaPromo'])) ?></td>
+                    <td><?= $promo['categoriaCliente'] ?></td>
+                    <td><span class="badge bg-secondary"><?= $diasSemanaMap[$promo['diasSemana']] ?? '-' ?></span></td>
                     <td>
                       <?php if ($promo['estadoPromo'] === 'aprobada'): ?>
-                        <span class="badge bg-success text-white"><?= $promo['estadoPromo'] ?></span>
+                        <span class="badge bg-success">Aprobada</span>
                       <?php elseif ($promo['estadoPromo'] === 'pendiente'): ?>
-                        <span class="badge bg-warning text-white"><?= $promo['estadoPromo'] ?></span>
+                        <span class="badge bg-warning text-dark">Pendiente</span>
                       <?php else: ?>
-                        <span class="badge bg-danger text-white"><?= $promo['estadoPromo'] ?></span>
+                        <span class="badge bg-danger">Denegada</span>
                       <?php endif; ?>
                     </td>
                     <td class="text-center">
-                      <div class="btn-group" role="group">
-                        <a href="edit.php?id=<?= $promo['codPromo'] ?>" class="btn btn-sm btn-outline-warning" title="Editar">
-                          <i class="fas fa-edit"></i>
-                        </a>
-                        <form method="POST" action="<?= SRC_URL ?>promociones/delete.php" style="display:inline;">
-                          <input type="hidden" name="id_promo" value="<?= $promo['codPromo'] ?>">
-                          <button type="submit" class="btn btn-sm btn-outline-danger" title="Eliminar" onclick="return confirm('¿Estás seguro de que quieres eliminar esta promoción?')">
-                            <i class="fas fa-trash"></i>
-                          </button>
+                      <?php if ($promo['estadoPromo'] === 'pendiente'): ?>
+                        <form method="POST" action="<?= SRC_URL ?>promociones/validar.php" class="d-inline">
+                          <input type="hidden" name="id_promocion" value="<?= $promo['codPromo'] ?>">
+                          <button type="submit" name="opcion" value="aprobar" class="btn btn-sm btn-success">Aprobar</button>
+                          <button type="submit" name="opcion" value="denegar" class="btn btn-sm btn-danger">Denegar</button>
                         </form>
-                      </div>
+                      <?php else: ?>
+                        <em>—</em>
+                      <?php endif; ?>
                     </td>
                   </tr>
                 <?php endwhile; ?>
@@ -123,14 +131,7 @@ $promosActivasCount = getPromocionesActivasCount($conn);
             </table>
           </div>
         <?php else: ?>
-          <div class="text-center py-5">
-            <i class="fas fa-tags fa-3x text-muted mb-3"></i>
-            <h5 class="text-muted">No hay promociones registradas</h5>
-            <p class="text-muted">Comienza creando tu primera promoción</p>
-            <a href="create.php" class="btn btn-warning">
-              <i class="fas fa-plus me-2"></i>Crear Primera Promoción
-            </a>
-          </div>
+          <div class="alert alert-info m-3">No hay promociones cargadas.</div>
         <?php endif; ?>
       </div>
     </div>

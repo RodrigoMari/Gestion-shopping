@@ -14,34 +14,76 @@ function borrarPromocion($conn, $id_promocion)
     }
 }
 
-function modificarPromocion($conn, $id, $texto, $desde, $hasta, $categoria, $dias, $estado, $local) {
-    try {
-        $sql = "UPDATE promociones 
-                SET textoPromo = ?, fechaDesdePromo = ?, fechaHastaPromo = ?, 
-                    categoriaCliente = ?, diasSemana = ?, estadoPromo = ?, codLocal = ?
-                WHERE codPromo = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ssssissi", $texto, $desde, $hasta, $categoria, $dias, $estado, $local, $id);
-
-        if ($stmt->execute()) {
-            return true;
-        } else {
-            return $stmt->error;
-        }
-    } catch (Exception $e) {
-        return $e->getMessage();
-    }
-}
-
 function getAllPromociones($conn)
 {
-    $sql = "SELECT * FROM promociones ORDER BY codPromo ASC";
-    $result = $conn->query($sql);
+    $sql = "SELECT p.*, l.nombreLocal 
+            FROM promociones p
+            JOIN locales l ON p.codLocal = l.codLocal
+            ORDER BY p.fechaDesdePromo DESC";
+    return $conn->query($sql);
+}
 
-    if ($result) {
-        return $result;
+function getPromocionesPorNivel($conn, $categoriaCliente = null)
+{
+    $sqlBase = "SELECT p.codPromo, p.textoPromo, p.fechaDesdePromo, p.fechaHastaPromo, 
+                   p.categoriaCliente, p.diasSemana,
+                   l.nombreLocal,
+                   CONCAT('https://placehold.co/600x400?text=', l.nombreLocal) AS imagenUrl
+            FROM promociones p
+            JOIN locales l ON p.codLocal = l.codLocal
+            WHERE p.estadoPromo = 'aprobada'";
+
+    if ($categoriaCliente === null) {
+        $sql = $sqlBase;
+        $stmt = $conn->prepare($sql);
     } else {
-        return "Error: " . $conn->error;
+        $niveles = [];
+        switch ($categoriaCliente) {
+            case 'Inicial':
+                $niveles = ['Inicial'];
+                break;
+            case 'Medium':
+                $niveles = ['Inicial', 'Medium'];
+                break;
+            case 'Premium':
+                $niveles = ['Inicial', 'Medium', 'Premium'];
+                break;
+        }
+
+        $placeholders = implode(',', array_fill(0, count($niveles), '?'));
+        $sql = $sqlBase . " AND (p.categoriaCliente IN ($placeholders) OR p.categoriaCliente IS NULL)";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param(str_repeat('s', count($niveles)), ...$niveles);
+    }
+
+    $stmt->execute();
+    return $stmt->get_result();
+}
+
+function solicitarPromocion($conn, $codCliente, $codPromo)
+{
+    $fechaHoy = date('Y-m-d');
+
+    $sqlCheck = "SELECT * FROM uso_promociones WHERE codCliente=? AND codPromo=? AND fechaUsoPromo=?";
+    $stmt = $conn->prepare($sqlCheck);
+    $stmt->bind_param("iis", $codCliente, $codPromo, $fechaHoy);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result && $result->num_rows > 0) {
+        return ["success" => false, "error" => "Ya solicitaste esta promoción hoy."];
+    }
+
+    $sql = "INSERT INTO uso_promociones (codCliente, codPromo, fechaUsoPromo, estado) 
+            VALUES (?, ?, ?, 'enviada')";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("iis", $codCliente, $codPromo, $fechaHoy);
+
+    if ($stmt->execute()) {
+        return ["success" => true];
+    } else {
+        return ["success" => false, "error" => $conn->error];
     }
 }
 
@@ -60,20 +102,17 @@ function getPromocionesActivasCount($conn)
 
 function validarPromocion($conn, $id_promocion, $opcion)
 {
-    if ($opcion == 1) {
-        $sql = "UPDATE promociones SET estadoPromo = 'aprobada' WHERE codPromo = $id_promocion";
+    if ($opcion === "aprobar") {
+        $sql = "UPDATE promociones SET estadoPromo = 'aprobada' WHERE codPromo = ?";
     } else {
-        $sql = "UPDATE promociones SET estadoPromo = 'denegada' WHERE codPromo = $id_promocion";
+        $sql = "UPDATE promociones SET estadoPromo = 'denegada' WHERE codPromo = ?";
     }
 
-    $resultado = $conn->query($sql);
-
-    if ($resultado) {
-        return true;
-    } else {
-        return "Error: " . $conn->error;
-    }
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $id_promocion);
+    return $stmt->execute();
 }
+
 
 function getPromocionesDestacadas($conn)
 {
@@ -101,4 +140,37 @@ function getPromoById($conn, $id_promocion)
     } else {
         return "Error: " . $conn->error;
     }
+}
+
+// Duenos locales
+function getPromocionesPorLocal($conn, $codLocal)
+{
+    $sql = "SELECT * FROM promociones WHERE codLocal=? AND estadoPromo='aprobada'";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $codLocal);
+    $stmt->execute();
+    return $stmt->get_result();
+}
+
+function contarUsoPromocion($conn, $codPromo)
+{
+    $sql = "SELECT COUNT(*) as total FROM uso_promociones WHERE codPromo=? AND estado='aceptada'";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $codPromo);
+    $stmt->execute();
+    $result = $stmt->get_result()->fetch_assoc();
+    return $result['total'];
+}
+
+function getSolicitudesPendientes($conn, $codLocal)
+{
+    $sql = "SELECT u.codCliente, u.codPromo, u.fechaUsoPromo, us.nombreUsuario, p.textoPromo
+            FROM uso_promociones u
+            JOIN usuarios us ON u.codCliente = us.codUsuario
+            JOIN promociones p ON u.codPromo = p.codPromo
+            WHERE p.codLocal=? AND u.estado='enviada'";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $codLocal);
+    $stmt->execute();
+    return $stmt->get_result();
 }
