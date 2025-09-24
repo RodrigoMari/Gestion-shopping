@@ -12,8 +12,8 @@
   <link rel="stylesheet" href="../../css/style.css">
 </head>
 
-
 <body>
+  <?php include __DIR__ . '/../../includes/flash_toast.php'; ?>
 
   <?php include_once __DIR__ . '../../../includes/header.php'; ?>
 
@@ -21,20 +21,20 @@
     <div class="row justify-content-center">
       <div class="col-md-6">
         <div class="card shadow-lg p-4">
-          <h2 class="card-title text-center mb-4 fw-bold fs-2">Iniciar Sesión</h2>
+          <h2 class="card-title text-center mb-4 fw-bold fs-2">Iniciar Sesion</h2>
           <form action="../../src/usuarios/login.php" method="POST">
             <div class="mb-3">
-              <label for="email" class="form-label fw-semibold">Correo electrónico</label>
+              <label for="email" class="form-label fw-semibold">Correo electronico</label>
               <input type="email" class="form-control" id="email" name="email" required>
             </div>
             <div class="mb-5">
-              <label for="password" class="form-label fw-semibold">Contraseña</label>
+              <label for="password" class="form-label fw-semibold">Contrasena</label>
               <input type="password" class="form-control" id="password" name="password" required>
             </div>
             <div class="d-grid gap-2">
-              <button type="submit" class="btn btn-warning btn-lg">Iniciar Sesión</button>
+              <button type="submit" class="btn btn-warning btn-lg">Iniciar Sesion</button>
             </div>
-            <p class="text-center mt-3">¿No tienes una cuenta? <a href="registro.php">Regístrate aquí</a></p>
+            <p class="text-center mt-3">No tienes una cuenta? <a href="registro.php">Registrate aqui</a></p>
           </form>
         </div>
       </div>
@@ -47,3 +47,4 @@
 </body>
 
 </html>
+

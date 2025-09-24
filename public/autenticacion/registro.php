@@ -13,6 +13,7 @@
 </head>
 
 <body>
+  <?php include __DIR__ . '/../../includes/flash_toast.php'; ?>
 
   <?php include_once __DIR__ . '../../../includes/header.php'; ?>
 
@@ -23,23 +24,23 @@
           <h2 class="card-title text-center mb-4 fw-bold fs-2">Registrarse</h2>
           <form action="../../src/usuarios/registrar.php" method="POST">
             <div class="mb-3">
-              <label for="email" class="form-label fw-semibold">Correo electrónico</label>
+              <label for="email" class="form-label fw-semibold">Correo electronico</label>
               <input type="email" name="email" id="email" class="form-control" required>
             </div>
             <div class="mb-3">
-              <label for="password" class="form-label fw-semibold">Contraseña</label>
+              <label for="password" class="form-label fw-semibold">Contrasena</label>
               <input type="password" name="password" id="password" class="form-control" required>
             </div>
             <div class="mb-5">
               <label for="tipoUsuario" class="form-label fw-semibold">Tipo de usuario</label>
               <select name="tipoUsuario" id="tipoUsuario" class="form-select" required>
                 <option value="cliente">Cliente</option>
-                <option value="dueno de local">Dueño de local</option>
+                <option value="dueno de local">Dueno de local</option>
               </select>
             </div>
             <div class="d-grid gap-2">
               <button type="submit" class="btn btn-warning btn-lg">Registrarse</button>
-              <p class="text-center mt-3">¿Ya tienes una cuenta? <a href="">Inicia Sesión aquí</a></p>
+              <p class="text-center mt-3">Ya tienes una cuenta? <a href="login.php">Inicia Sesion aqui</a></p>
             </div>
           </form>
         </div>

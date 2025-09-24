@@ -18,7 +18,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
   $stmt->bind_param("sii", $estado, $codCliente, $codPromo);
 
   if ($stmt->execute()) {
-    // 👇 si se aceptó, actualizar nivel del cliente
     if ($estado === 'aceptada') {
       actualizarCategoriaCliente($conn, $codCliente);
     }

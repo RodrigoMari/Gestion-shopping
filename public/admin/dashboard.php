@@ -10,7 +10,15 @@ require_once __DIR__ . '/../../src/usuarios/model.php';
 $locales = getAllLocales($conn);
 $novedades = getAllNovedades($conn);
 $promociones = getAllPromociones($conn);
-//acciones???
+
+$duenosPendientes = getDuenosPendientes($conn);
+$promosPendientes = getPromocionesPendientes($conn);
+$ultimosLocales = $conn->query("SELECT * FROM locales ORDER BY codLocal DESC LIMIT 2");
+$ultimasPromos = $conn->query("SELECT p.textoPromo, l.nombreLocal, p.fechaDesdePromo
+                              FROM promociones p
+                              JOIN locales l ON p.codLocal = l.codLocal
+                              ORDER BY p.codPromo DESC LIMIT 2");
+$ultimasNovedades = $conn->query("SELECT * FROM novedades ORDER BY codNovedad DESC LIMIT 1");
 ?>
 
 <!DOCTYPE html>
@@ -102,7 +110,9 @@ $promociones = getAllPromociones($conn);
                   <div class="d-flex justify-content-between align-items-center">
                     <div>
                       <h6 class="text-muted mb-2">Acciones Pendientes</h6>
-                      <h3 class="mb-0">3</h3>
+                      <h3 class="mb-0">
+                        <?= $duenosPendientes->num_rows + $promosPendientes->num_rows ?>
+                      </h3>
                     </div>
                     <div class="card-icon bg-light rounded-circle p-3">
                       <i class="fas fa-exclamation-circle"></i>
@@ -129,18 +139,6 @@ $promociones = getAllPromociones($conn);
                   </div>
                   <h5 class="card-title">Nuevo Local</h5>
                   <p class="text-muted">Agregar un nuevo local al shopping</p>
-                </div>
-              </a>
-            </div>
-
-            <div class="col-md-6 col-lg-3 mb-4">
-              <a href="promociones/create.php" class="card admin-card h-100 text-decoration-none">
-                <div class="card-body text-center">
-                  <div class="card-icon">
-                    <i class="fas fa-percent"></i>
-                  </div>
-                  <h5 class="card-title">Nueva Promoción</h5>
-                  <p class="text-muted">Crear una nueva promoción</p>
                 </div>
               </a>
             </div>
@@ -177,54 +175,53 @@ $promociones = getAllPromociones($conn);
                 <div class="card-body">
                   <h2 class="h4 mb-4">Actividad Reciente</h2>
                   <div class="list-group">
-                    <div class="list-group-item border-0 d-flex align-items-center">
-                      <div class="me-3 text-success">
-                        <i class="fas fa-check-circle"></i>
+                    <?php while ($p = $ultimasPromos->fetch_assoc()): ?>
+                      <div class="list-group-item border-0 d-flex align-items-center">
+                        <div class="me-3 text-success"><i class="fas fa-check-circle"></i></div>
+                        <div>
+                          <small class="text-muted">Promoción creada</small>
+                          <p class="mb-1"><?= htmlspecialchars($p['textoPromo']) ?> (<?= $p['nombreLocal'] ?>)</p>
+                        </div>
                       </div>
-                      <div>
-                        <small class="text-muted">Hace 2 minutos</small>
-                        <p class="mb-1">Promoción "2x1 en cafés" aprobada</p>
+                    <?php endwhile; ?>
+
+                    <?php while ($l = $ultimosLocales->fetch_assoc()): ?>
+                      <div class="list-group-item border-0 d-flex align-items-center">
+                        <div class="me-3 text-primary"><i class="fas fa-store"></i></div>
+                        <div>
+                          <small class="text-muted">Nuevo local</small>
+                          <p class="mb-1"><?= htmlspecialchars($l['nombreLocal']) ?></p>
+                        </div>
                       </div>
-                    </div>
-                    <div class="list-group-item border-0 d-flex align-items-center">
-                      <div class="me-3 text-primary">
-                        <i class="fas fa-store"></i>
+                    <?php endwhile; ?>
+
+                    <?php while ($n = $ultimasNovedades->fetch_assoc()): ?>
+                      <div class="list-group-item border-0 d-flex align-items-center">
+                        <div class="me-3 text-warning"><i class="fas fa-bullhorn"></i></div>
+                        <div>
+                          <small class="text-muted">Nueva novedad</small>
+                          <p class="mb-1"><?= htmlspecialchars($n['textoNovedad']) ?></p>
+                        </div>
                       </div>
-                      <div>
-                        <small class="text-muted">Hace 30 minutos</small>
-                        <p class="mb-1">Nuevo local "Libros y Más" registrado</p>
-                      </div>
-                    </div>
-                    <div class="list-group-item border-0 d-flex align-items-center">
-                      <div class="me-3 text-warning">
-                        <i class="fas fa-exclamation-triangle"></i>
-                      </div>
-                      <div>
-                        <small class="text-muted">Hace 1 hora</small>
-                        <p class="mb-1">3 promociones pendientes de aprobación</p>
-                      </div>
-                    </div>
+                    <?php endwhile; ?>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </main>
-    </div>
-  </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-    var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
-      return new bootstrap.Tooltip(tooltipTriggerEl)
-    });
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+          var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+          var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+          });
 
-    document.querySelector('.btn-secondary.d-md-none').addEventListener('click', function() {
-      document.querySelector('.sidebar').classList.toggle('d-none');
-    });
-  </script>
+          document.querySelector('.btn-secondary.d-md-none').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('d-none');
+          });
+        </script>
 </body>
 
 </html>

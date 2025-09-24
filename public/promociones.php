@@ -35,6 +35,7 @@ if ($codPromo) {
 </head>
 
 <body>
+  <?php include __DIR__ . '/../includes/flash_toast.php'; ?>
 
   <?php include '../includes/header.php'; ?>
 
@@ -44,10 +45,10 @@ if ($codPromo) {
 
     <form class="row g-3 mb-5 justify-content-center" method="GET" action="promociones.php">
       <div class="col-auto">
-        <input type="number" class="form-control" name="codLocal" placeholder="Código del local" value="<?= htmlspecialchars($codLocal ?? '') ?>">
+        <input type="number" class="form-control" name="codLocal" placeholder="Codigo del local" value="<?= htmlspecialchars($codLocal ?? '') ?>">
       </div>
       <div class="col-auto">
-        <input type="number" class="form-control" name="codPromo" placeholder="Código de promoción" value="<?= htmlspecialchars($codPromo ?? '') ?>">
+        <input type="number" class="form-control" name="codPromo" placeholder="Codigo de promocion" value="<?= htmlspecialchars($codPromo ?? '') ?>">
       </div>
       <div class="col-auto">
         <button type="submit" class="btn btn-warning">Buscar</button>
@@ -59,21 +60,21 @@ if ($codPromo) {
         <div class="col">
           <div class="card h-100 shadow-sm">
             <img src="<?= htmlspecialchars($promo['imagenUrl']) ?>"
-              alt="Promoción en <?= htmlspecialchars($promo['nombreLocal']) ?>"
+              alt="Promocion en <?= htmlspecialchars($promo['nombreLocal']) ?>"
               class="card-img-top">
             <div class="card-body">
               <h5 class="card-title"><?= htmlspecialchars($promo['textoPromo']) ?></h5>
-              <p class="card-text">Promoción válida en <?= htmlspecialchars($promo['nombreLocal']) ?></p>
+              <p class="card-text">Promocion valida en <?= htmlspecialchars($promo['nombreLocal']) ?></p>
               <p class="card-text">
-                <small class="text-muted">Válido hasta <?= date('d/m/Y', strtotime($promo['fechaHastaPromo'])) ?></small>
+                <small class="text-muted">Valido hasta <?= date('d/m/Y', strtotime($promo['fechaHastaPromo'])) ?></small>
               </p>
               <?php if (isset($_SESSION['tipoUsuario']) && $_SESSION['tipoUsuario'] === 'cliente'): ?>
                 <form method="POST" action="<?= SRC_URL ?>promociones/solicitar.php">
                   <input type="hidden" name="codPromo" value="<?= $promo['codPromo'] ?>">
-                  <button type="submit" class="btn btn-sm btn-warning">Solicitar Promoción</button>
+                  <button type="submit" class="btn btn-sm btn-warning">Solicitar Promocion</button>
                 </form>
               <?php else: ?>
-                <a href="autenticacion/login.php" class="btn btn-sm btn-warning">Inicia sesión para solicitar</a>
+                <a href="autenticacion/login.php" class="btn btn-sm btn-warning">Inicia sesion para solicitar</a>
               <?php endif; ?>
             </div>
           </div>

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 include_once __DIR__ . '/../../config/database.php';
 
 function borrarPromocion($conn, $id_promocion)
@@ -22,6 +22,16 @@ function getAllPromociones($conn)
             ORDER BY p.fechaDesdePromo DESC";
     return $conn->query($sql);
 }
+
+function getPromocionesPendientes($conn)
+{
+    $sql = "SELECT p.*, l.nombreLocal
+            FROM promociones p
+            JOIN locales l ON p.codLocal = l.codLocal
+            WHERE p.estadoPromo = 'pendiente'";
+    return $conn->query($sql);
+}
+
 
 function getPromocionesPorNivel($conn, $categoriaCliente = null)
 {
@@ -72,7 +82,7 @@ function solicitarPromocion($conn, $codCliente, $codPromo)
     $result = $stmt->get_result();
 
     if ($result && $result->num_rows > 0) {
-        return ["success" => false, "error" => "Ya solicitaste esta promoción hoy."];
+        return ["success" => false, "error" => "Ya solicitaste esta promocion hoy."];
     }
 
     $sql = "INSERT INTO uso_promociones (codCliente, codPromo, fechaUsoPromo, estado) 
@@ -126,30 +136,32 @@ function getPromocionesDestacadas($conn)
     return $conn->query($sql);
 }
 
-function getPromoById($conn, $id_promocion)
-{
-    $sql = "SELECT * FROM promociones WHERE codPromo = $id_promocion";
-    $result = $conn->query($sql);
-
-    if ($result) {
-        if ($result->num_rows > 0) {
-            return $result->fetch_assoc();
-        } else {
-            return null; // No se encontró la promoción
-        }
-    } else {
-        return "Error: " . $conn->error;
-    }
-}
-
-// Duenos locales
 function getPromocionesPorLocal($conn, $codLocal)
 {
-    $sql = "SELECT * FROM promociones WHERE codLocal=? AND estadoPromo='aprobada'";
+    $sql = "SELECT p.*, l.nombreLocal,
+                   CONCAT('https://placehold.co/600x400?text=', l.nombreLocal) AS imagenUrl
+            FROM promociones p
+            JOIN locales l ON p.codLocal = l.codLocal
+            WHERE p.codLocal = ? AND p.estadoPromo = 'aprobada'";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $codLocal);
     $stmt->execute();
     return $stmt->get_result();
+}
+
+// Duenos locales
+
+function getPromoById($conn, $codPromo)
+{
+    $sql = "SELECT p.*, l.nombreLocal,
+                   CONCAT('https://placehold.co/600x400?text=', l.nombreLocal) AS imagenUrl
+            FROM promociones p
+            JOIN locales l ON p.codLocal = l.codLocal
+            WHERE p.codPromo = ? AND p.estadoPromo = 'aprobada'";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $codPromo);
+    $stmt->execute();
+    return $stmt->get_result()->fetch_assoc();
 }
 
 function contarUsoPromocion($conn, $codPromo)
@@ -168,9 +180,37 @@ function getSolicitudesPendientes($conn, $codLocal)
             FROM uso_promociones u
             JOIN usuarios us ON u.codCliente = us.codUsuario
             JOIN promociones p ON u.codPromo = p.codPromo
-            WHERE p.codLocal=? AND u.estado='enviada'";
+            WHERE p.codLocal=? AND u.estado IN ('pendiente','enviada')";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $codLocal);
     $stmt->execute();
     return $stmt->get_result();
+}
+
+// Cliente
+function getSolicitudesPorCliente($conn, $codCliente)
+{
+    $sql = "SELECT u.estado AS estadoSolicitud, u.fechaUsoPromo, 
+                   p.textoPromo, l.nombreLocal
+            FROM uso_promociones u
+            JOIN promociones p ON u.codPromo = p.codPromo
+            JOIN locales l ON p.codLocal = l.codLocal
+            WHERE u.codCliente = ?
+            ORDER BY u.fechaUsoPromo DESC";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $codCliente);
+    $stmt->execute();
+    return $stmt->get_result();
+}
+
+function contarPromosUsadasPorCliente($conn, $codCliente)
+{
+    $sql = "SELECT COUNT(*) as total 
+            FROM uso_promociones 
+            WHERE codCliente = ? AND estado = 'aceptada'";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $codCliente);
+    $stmt->execute();
+    $result = $stmt->get_result()->fetch_assoc();
+    return $result['total'] ?? 0;
 }

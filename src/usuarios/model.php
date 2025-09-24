@@ -57,7 +57,7 @@ function loginUsuario($conn, $email, $password)
             if ($usuario['estado'] !== 'validado') {
                 return [
                     "success" => false,
-                    "error" => "Cuenta no validada aún."
+                    "error" => "Cuenta no validada aun."
                 ];
             }
 
@@ -72,7 +72,7 @@ function loginUsuario($conn, $email, $password)
         } else {
             return [
                 "success" => false,
-                "error" => "Contraseña incorrecta."
+                "error" => "Contrasena incorrecta."
             ];
         }
     } else {
@@ -103,23 +103,10 @@ function aprobarDuenoLocal($conn, $idUsuario)
 
 function rechazarDuenoLocal($conn, $idUsuario)
 {
-    $sql = "DELETE FROM usuarios WHERE codUsuario = ? AND tipoUsuario = 'dueño de local'";
+    $sql = "DELETE FROM usuarios WHERE codUsuario = ? AND tipoUsuario = 'dueno de local'";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $idUsuario);
     return $stmt->execute();
-}
-
-function validarUsuario($conn, $id_usuario)
-{
-    $sql = "UPDATE usuarios SET estado = 'validado' WHERE codUsuario = $id_usuario";
-
-    $resultado = $conn->query($sql);
-
-    if ($resultado) {
-        return true;
-    } else {
-        return "Error: " . $conn->error;
-    }
 }
 
 function getUserById($conn, $id_usuario)
