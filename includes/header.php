@@ -5,7 +5,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 <header class="custom-header">
   <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container">
-      <a class="navbar-brand fw-semibold" href="<?= BASE_URL ?>public/index.php">
+  <a class="navbar-brand fw-semibold" href="<?= PUBLIC_URL ?>index.php">
         <img src="<?= IMG_URL ?>shopping-bag2.PNG" alt="Logo" width="30" height="30" class="d-inline-block align-text-top me-2">
         Rosario Center
       </a>
@@ -15,15 +15,15 @@ $currentPage = basename($_SERVER['PHP_SELF']);
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
           <li class="nav-item">
-            <a class="nav-link fw-semibold <?= ($currentPage == 'index.php') ? 'active' : '' ?>" aria-current="page" href="<?= BASE_URL ?>public/index.php">Inicio</a>
+            <a class="nav-link fw-semibold <?= ($currentPage == 'index.php') ? 'active' : '' ?>" aria-current="page" href="<?= PUBLIC_URL ?>index.php">Inicio</a>
           </li>
           <?php if (isset($_SESSION['tipoUsuario']) && $_SESSION['tipoUsuario'] === 'administrador'): ?>
             <li class="nav-item">
-              <a class="nav-link fw-semibold" href="<?= PUBLIC_URL ?>admin/index.php">Dashboard</a>
+              <a class="nav-link fw-semibold" href="<?= PUBLIC_URL ?>admin/dashboard.php">Dashboard</a>
             </li>
           <?php endif; ?>
           <li class="nav-item">
-            <a class="nav-link fw-semibold <?= ($currentPage == 'promociones.php') ? 'active' : '' ?>" href="<?= BASE_URL ?>public/promociones.php">Promociones</a>
+            <a class="nav-link fw-semibold <?= ($currentPage == 'promociones.php') ? 'active' : '' ?>" href="<?= PUBLIC_URL ?>promociones.php">Promociones</a>
           </li>
           <li class="nav-item">
             <a class="nav-link fw-semibold" href="#">Locales</a>
@@ -41,12 +41,12 @@ $currentPage = basename($_SERVER['PHP_SELF']);
             </a>
             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
               <?php if (!isset($_SESSION['codUsuario'])): ?>
-                <li><a class="dropdown-item" href="<?= PUBLIC_URL ?>login.php">Iniciar Sesión</a></li>
-                <li><a class="dropdown-item" href="<?= PUBLIC_URL ?>registro.php">Registrarse</a></li>
+                <li><a class="dropdown-item" href="<?= PUBLIC_URL ?>autenticacion/login.php">Iniciar Sesión</a></li>
+                <li><a class="dropdown-item" href="<?= PUBLIC_URL ?>autenticacion/registro.php">Registrarse</a></li>
               <?php else: ?>
                 <?php if ($_SESSION['tipoUsuario'] === 'administrador'): ?>
-                  <li><a class="dropdown-item" href="<?= PUBLIC_URL ?>admin/index.php">Panel Admin</a></li>
-                <?php elseif ($_SESSION['tipoUsuario'] === 'dueño de local'): ?>
+                  <li><a class="dropdown-item" href="<?= PUBLIC_URL ?>admin/dashboard.php">Panel Admin</a></li>
+                <?php elseif ($_SESSION['tipoUsuario'] === 'dueno de local'): ?>
                   <li><a class="dropdown-item" href="<?= PUBLIC_URL ?>locales/index.php">Panel Local</a></li>
                 <?php else: ?>
                   <li><a class="dropdown-item" href="<?= PUBLIC_URL ?>usuario/panel.php">Panel Usuario</a></li>
@@ -54,7 +54,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                 <li>
                   <hr class="dropdown-divider">
                 </li>
-                <li><a class="dropdown-item" href="<?= PUBLIC_URL ?>logout.php">Cerrar Sesión</a></li>
+                <li><a class="dropdown-item" href="<?= PUBLIC_URL ?>autenticacion/logout.php">Cerrar Sesión</a></li>
               <?php endif; ?>
             </ul>
           </li>

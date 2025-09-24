@@ -4,7 +4,20 @@ require_once __DIR__ . '/../src/promociones/model.php';
 
 $categoria = isset($_SESSION['categoriaCliente']) ? $_SESSION['categoriaCliente'] : null;
 $codLocal = isset($_GET['codLocal']) && $_GET['codLocal'] !== '' ? (int) $_GET['codLocal'] : null;
-$result_promociones = getPromocionesPorNivel($conn, $categoria, $codLocal);
+$codPromo = isset($_GET['codPromo']) && $_GET['codPromo'] !== '' ? (int) $_GET['codPromo'] : null;
+
+if ($codPromo) {
+  $promo = getPromoById($conn, $codPromo);
+  if ($promo) {
+    $result_promociones = [$promo];
+  } else {
+    $result_promociones = [];
+  }
+} elseif ($codLocal) {
+  $result_promociones = getPromocionesPorLocal($conn, $codLocal);
+} else {
+  $result_promociones = getPromocionesPorNivel($conn, $categoria);
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -34,6 +47,9 @@ $result_promociones = getPromocionesPorNivel($conn, $categoria, $codLocal);
         <input type="number" class="form-control" name="codLocal" placeholder="Código del local" value="<?= htmlspecialchars($codLocal ?? '') ?>">
       </div>
       <div class="col-auto">
+        <input type="number" class="form-control" name="codPromo" placeholder="Código de promoción" value="<?= htmlspecialchars($codPromo ?? '') ?>">
+      </div>
+      <div class="col-auto">
         <button type="submit" class="btn btn-warning">Buscar</button>
       </div>
     </form>
@@ -57,7 +73,7 @@ $result_promociones = getPromocionesPorNivel($conn, $categoria, $codLocal);
                   <button type="submit" class="btn btn-sm btn-warning">Solicitar Promoción</button>
                 </form>
               <?php else: ?>
-                <a href="login.php" class="btn btn-sm btn-warning">Inicia sesión para solicitar</a>
+                <a href="autenticacion/login.php" class="btn btn-sm btn-warning">Inicia sesión para solicitar</a>
               <?php endif; ?>
             </div>
           </div>

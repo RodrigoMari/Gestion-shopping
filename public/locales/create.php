@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../../config/config.php';
 require_once __DIR__ . '/../../config/database.php';
 
-if (!isset($_SESSION['tipoUsuario']) || $_SESSION['tipoUsuario'] !== 'dueño de local') {
+if (!isset($_SESSION['tipoUsuario']) || $_SESSION['tipoUsuario'] !== 'dueno de local') {
   die("Acceso denegado.");
 }
 

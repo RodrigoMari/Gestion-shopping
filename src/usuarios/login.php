@@ -6,17 +6,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $password = $_POST["password"];
 
   $resultado = loginUsuario($conn, $email, $password);
-
   if ($resultado["success"]) {
     switch ($_SESSION['tipoUsuario']) {
       case 'administrador':
-        header("Location: ../../public/admin/index.php");
+        header("Location: ../../public/admin/dashboard.php");
         break;
-      case 'dueño de local':
-        header("Location: ../../public/locales.php");
+      case 'dueno de local':
+        header("Location: ../../public/index.php");
         break;
       case 'cliente':
-        header("Location: ../../public/promociones.php");
+        header("Location: ../../public/index.php");
         break;
     }
     exit();

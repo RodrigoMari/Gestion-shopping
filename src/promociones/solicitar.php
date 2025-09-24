@@ -1,7 +1,6 @@
 <?php
 require_once __DIR__ . '/model.php';
 
-session_start();
 
 if (!isset($_SESSION['codUsuario'])) {
   die("Debes iniciar sesión para solicitar una promoción.");

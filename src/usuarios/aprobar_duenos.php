@@ -11,17 +11,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $accion = $_POST['accion'];
 
   if ($accion === 'aprobar') {
-    if (aprobarDuenoLocal($conn, $id)) {
-      header("Location: ../../public/admin/duenos.php?msg=ok");
-    } else {
-      header("Location: ../../public/admin/duenos.php?msg=error");
-    }
+    aprobarDuenoLocal($conn, $id); 
+    header("Location: ../../public/admin/usuarios/usuarios.php");
   } elseif ($accion === 'rechazar') {
-    if (rechazarDuenoLocal($conn, $id)) {
-      header("Location: ../../public/admin/duenos.php?msg=ok");
-    } else {
-      header("Location: ../../public/admin/duenos.php?msg=error");
-    }
-  }
+    rechazarDuenoLocal($conn, $id);
+    header("Location: ../../public/admin/usuarios/usuarios.php");
   exit();
+  }
 }

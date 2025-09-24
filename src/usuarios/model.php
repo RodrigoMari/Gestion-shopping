@@ -89,7 +89,7 @@ function getDuenosPendientes($conn)
 {
     $sql = "SELECT codUsuario, nombreUsuario, estado 
             FROM usuarios 
-            WHERE tipoUsuario = 'dueño de local' AND estado = 'pendiente'";
+            WHERE tipoUsuario = 'dueno de local' AND estado = 'pendiente'";
     return $conn->query($sql);
 }
 

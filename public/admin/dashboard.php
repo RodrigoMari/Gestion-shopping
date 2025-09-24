@@ -31,50 +31,12 @@ $promociones = getAllPromociones($conn);
 <body>
   <div class="d-flex">
     <!-- Sidebar -->
-    <div class="sidebar d-none d-md-block" style="width: 250px;">
-      <div class="py-4 text-center">
-        <h4 class="mb-0">Rosario Center</h4>
-        <small>Panel de Administración</small>
-      </div>
-      <div class="mt-4">
-        <a href="<?= PUBLIC_URL ?>admin/index.php" class="sidebar-link active">
-          <i class="fas fa-tachometer-alt"></i> Dashboard
-        </a>
-        <a href="<?= PUBLIC_URL ?>admin/locales/locales.php" class="sidebar-link">
-          <i class="fas fa-store"></i> Locales
-        </a>
-        <a href="<?= PUBLIC_URL ?>admin/promociones/promociones.php" class="sidebar-link">
-          <i class="fas fa-tag"></i> Promociones
-        </a>
-        <a href="<?= PUBLIC_URL ?>admin/novedades/novedades.php" class="sidebar-link">
-          <i class="fas fa-newspaper"></i> Novedades
-        </a>
-        <a href="<?= PUBLIC_URL ?>admin/usuarios/usuarios.php" class="sidebar-link">
-          <i class="fas fa-users"></i> Usuarios
-        </a>
-        <hr class="bg-secondary mx-3">
-        <a href="../logout.php" class="sidebar-link">
-          <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
-        </a>
-      </div>
-    </div>
+    <?php include '../../includes/sidebar.php'; ?>
 
     <!-- Main Content -->
     <div class="flex-grow-1">
       <!-- Header -->
-      <header class="admin-header">
-        <div class="container-fluid d-flex justify-content-between align-items-center">
-          <button class="btn btn-secondary d-md-none">
-            <i class="fas fa-bars"></i>
-          </button>
-          <h1 class="h4 mb-0">Panel de Administración</h1>
-          <div class="text-end">
-            <span class="me-2">Bienvenido, Admin</span>
-            <i class="fas fa-user-circle"></i>
-          </div>
-        </div>
-      </header>
-
+      <?php include '../../includes/admin_header.php'; ?>
       <!-- Main Content -->
       <main class="admin-main">
         <div class="container-fluid">

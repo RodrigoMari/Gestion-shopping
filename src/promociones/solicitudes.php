@@ -2,8 +2,7 @@
 require_once __DIR__ . '/model.php';
 require_once __DIR__ . '/../../src/usuarios/model.php';
 
-session_start();
-if (!isset($_SESSION['tipoUsuario']) || $_SESSION['tipoUsuario'] !== 'dueño de local') {
+if (!isset($_SESSION['tipoUsuario']) || $_SESSION['tipoUsuario'] !== 'dueno de local') {
   die("Acceso denegado.");
 }
 
@@ -23,9 +22,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if ($estado === 'aceptada') {
       actualizarCategoriaCliente($conn, $codCliente);
     }
-    header("Location: ../../public/local/index.php?msg=ok");
+    header("Location: ../../public/locales/index.php");
   } else {
-    header("Location: ../../public/local/index.php?msg=error");
+    header("Location: ../../public/locales/index.php");
   }
   exit();
 }

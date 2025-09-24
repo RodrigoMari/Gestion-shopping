@@ -21,146 +21,150 @@ $novedadesVigentes = obtenerNovedadesVigentes($conn);
 </head>
 
 <body>
-  <?php include '../../../includes/header.php'; ?>
+  <div class="d-flex">
+    <?php include '../../../includes/sidebar.php'; ?>
+    <div class="flex-grow-1">
+      <?php include '../../../includes/admin_header.php'; ?>
+      <main class="container my-5 px-4">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-4">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="<?= PUBLIC_URL ?>admin/dashboard.php" class="text-decoration-none">Admin</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Novedades</li>
+          </ol>
+        </nav>
 
-  <main class="container my-5">
-    <!-- Breadcrumb -->
-    <nav aria-label="breadcrumb" class="mb-4">
-      <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="<?= BASE_URL ?>public/admin/index.php" class="text-decoration-none">Admin</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Novedades</li>
-      </ol>
-    </nav>
-
-    <!-- Título y botón de acción -->
-    <div class="row mb-4">
-      <div class="col-md-8">
-        <h2 class="fw-bold text-dark">Administración de Novedades</h2>
-        <p class="text-muted">Gestiona todos las novedades del centro comercial</p>
-      </div>
-      <div class="col-md-4 text-end">
-        <a href="create.php" class="btn btn-warning btn-lg">
-          <i class="fas fa-plus me-2"></i>Nueva Novedad
-        </a>
-      </div>
-    </div>
-
-    <!-- Estadísticas rápidas -->
-    <div class="row mb-5">
-      <div class="col-md-3">
-        <div class="card text-center shadow-sm border-0">
-          <div class="card-body">
-            <i class="fas fa-calendar-check fa-2x text-warning mb-2"></i>
-            <h4 class="fw-bold">
-              <?php
-              if (is_object($novedades)) {
-                echo $novedades->num_rows;
-                $novedades->data_seek(0); // Reset pointer
-              } else {
-                echo '0';
-              }
-              ?>
-            </h4>
-            <p class="text-muted mb-0">Novedades Totales</p>
+        <!-- Título y botón de acción -->
+        <div class="row mb-4">
+          <div class="col-md-8">
+            <h2 class="fw-bold text-dark">Administración de Novedades</h2>
+            <p class="text-muted">Gestiona todos las novedades del centro comercial</p>
           </div>
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="card text-center shadow-sm border-0">
-          <div class="card-body">
-            <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
-            <h4 class="fw-bold"><?= $novedadesVigentes->num_rows ?></h4>
-            <p class="text-muted mb-0">Novedades Activas</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="card text-center shadow-sm border-0">
-          <div class="card-body">
-            <i class="fas fa-tags fa-2x text-info mb-2"></i>
-            <h4 class="fw-bold">--</h4>
-            <p class="text-muted mb-0">Rubros</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="card text-center shadow-sm border-0">
-          <div class="card-body">
-            <i class="fas fa-users fa-2x text-primary mb-2"></i>
-            <h4 class="fw-bold">--</h4>
-            <p class="text-muted mb-0">Propietarios</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Tabla de novedades -->
-    <div class="card shadow-sm border-0">
-      <div class="card-header bg-light">
-        <h5 class="mb-0 fw-bold">Lista de Novedades</h5>
-      </div>
-      <div class="card-body p-0">
-        <?php if (is_object($novedades) && $novedades->num_rows > 0): ?>
-          <div class="table-responsive">
-            <table class="table table-hover mb-0">
-              <thead class="table-light">
-                <tr>
-                  <th class="fw-semibold">ID</th>
-                  <th class="fw-semibold">Texto</th>
-                  <th class="fw-semibold">Fecha Desde</th>
-                  <th class="fw-semibold">Fecha Hasta</th>
-                  <th class="fw-semibold">Usuario</th>
-                  <th class="fw-semibold text-center">Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                <?php while ($novedad = $novedades->fetch_assoc()): ?>
-                  <tr>
-                    <td class="fw-semibold text-primary">#<?= $novedad['codNovedad'] ?></td>
-                    <td>
-                      <div class="d-flex align-items-center">
-                        <div class="bg-warning rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
-                          <i class="fas fa-calendar-check text-white"></i>
-                        </div>
-                        <div>
-                          <div class="fw-semibold"><?= htmlspecialchars($novedad['textoNovedad']) ?></div>
-                        </div>
-                      </div>
-                    </td>
-                    <td class="text-muted"><?= htmlspecialchars($novedad['fechaDesdeNovedad']) ?></td>
-                    <td class="text-muted"><?= htmlspecialchars($novedad['fechaHastaNovedad']) ?></td>
-                    <td class="text-muted"><?= $novedad['tipoUsuario'] ?></td>
-                    <td class="text-center">
-                      <div class="btn-group" role="group">
-                        <a href="edit.php?id=<?= $novedad['codNovedad'] ?>" class="btn btn-sm btn-outline-warning" title="Editar">
-                          <i class="fas fa-edit"></i>
-                        </a>
-                        <form method="POST" action="<?= SRC_URL ?>novedades/delete.php" style="display:inline;">
-                          <input type="hidden" name="id_novedad" value="<?= $novedad['codNovedad'] ?>">
-                          <button type="submit" class="btn btn-sm btn-outline-danger" title="Eliminar" onclick="return confirm('¿Estás seguro de que quieres eliminar esta novedad?')">
-                            <i class="fas fa-trash"></i>
-                          </button>
-                        </form>
-                      </div>
-                    </td>
-                  </tr>
-                <?php endwhile; ?>
-              </tbody>
-            </table>
-          </div>
-        <?php else: ?>
-          <div class="text-center py-5">
-            <i class="fas fa-store fa-3x text-muted mb-3"></i>
-            <h5 class="text-muted">No hay novedades registrados</h5>
-            <p class="text-muted">Comienza creando tu primera novedad</p>
-            <a href="create.php" class="btn btn-warning">
-              <i class="fas fa-plus me-2"></i>Crear Primer Novedad
+          <div class="col-md-4 text-end">
+            <a href="create.php" class="btn btn-warning btn-lg">
+              <i class="fas fa-plus me-2"></i>Nueva Novedad
             </a>
           </div>
-        <?php endif; ?>
-      </div>
+        </div>
+
+        <!-- Estadísticas rápidas -->
+        <div class="row mb-5">
+          <div class="col-md-3">
+            <div class="card text-center shadow-sm border-0">
+              <div class="card-body">
+                <i class="fas fa-calendar-check fa-2x text-warning mb-2"></i>
+                <h4 class="fw-bold">
+                  <?php
+                  if (is_object($novedades)) {
+                    echo $novedades->num_rows;
+                    $novedades->data_seek(0); // Reset pointer
+                  } else {
+                    echo '0';
+                  }
+                  ?>
+                </h4>
+                <p class="text-muted mb-0">Novedades Totales</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="card text-center shadow-sm border-0">
+              <div class="card-body">
+                <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
+                <h4 class="fw-bold"><?= $novedadesVigentes->num_rows ?></h4>
+                <p class="text-muted mb-0">Novedades Activas</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="card text-center shadow-sm border-0">
+              <div class="card-body">
+                <i class="fas fa-tags fa-2x text-info mb-2"></i>
+                <h4 class="fw-bold">--</h4>
+                <p class="text-muted mb-0">Rubros</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="card text-center shadow-sm border-0">
+              <div class="card-body">
+                <i class="fas fa-users fa-2x text-primary mb-2"></i>
+                <h4 class="fw-bold">--</h4>
+                <p class="text-muted mb-0">Propietarios</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabla de novedades -->
+        <div class="card shadow-sm border-0">
+          <div class="card-header bg-light">
+            <h5 class="mb-0 fw-bold">Lista de Novedades</h5>
+          </div>
+          <div class="card-body p-0">
+            <?php if (is_object($novedades) && $novedades->num_rows > 0): ?>
+              <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                  <thead class="table-light">
+                    <tr>
+                      <th class="fw-semibold">ID</th>
+                      <th class="fw-semibold">Texto</th>
+                      <th class="fw-semibold">Fecha Desde</th>
+                      <th class="fw-semibold">Fecha Hasta</th>
+                      <th class="fw-semibold">Usuario</th>
+                      <th class="fw-semibold text-center">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <?php while ($novedad = $novedades->fetch_assoc()): ?>
+                      <tr>
+                        <td class="fw-semibold text-primary">#<?= $novedad['codNovedad'] ?></td>
+                        <td>
+                          <div class="d-flex align-items-center">
+                            <div class="bg-warning rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                              <i class="fas fa-calendar-check text-white"></i>
+                            </div>
+                            <div>
+                              <div class="fw-semibold"><?= htmlspecialchars($novedad['textoNovedad']) ?></div>
+                            </div>
+                          </div>
+                        </td>
+                        <td class="text-muted"><?= htmlspecialchars($novedad['fechaDesdeNovedad']) ?></td>
+                        <td class="text-muted"><?= htmlspecialchars($novedad['fechaHastaNovedad']) ?></td>
+                        <td class="text-muted"><?= $novedad['tipoUsuario'] ?></td>
+                        <td class="text-center">
+                          <div class="btn-group" role="group">
+                            <a href="edit.php?id=<?= $novedad['codNovedad'] ?>" class="btn btn-sm btn-outline-warning" title="Editar">
+                              <i class="fas fa-edit"></i>
+                            </a>
+                            <form method="POST" action="<?= SRC_URL ?>novedades/delete.php" style="display:inline;">
+                              <input type="hidden" name="id_novedad" value="<?= $novedad['codNovedad'] ?>">
+                              <button type="submit" class="btn btn-sm btn-outline-danger" title="Eliminar" onclick="return confirm('¿Estás seguro de que quieres eliminar esta novedad?')">
+                                <i class="fas fa-trash"></i>
+                              </button>
+                            </form>
+                          </div>
+                        </td>
+                      </tr>
+                    <?php endwhile; ?>
+                  </tbody>
+                </table>
+              </div>
+            <?php else: ?>
+              <div class="text-center py-5">
+                <i class="fas fa-store fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">No hay novedades registrados</h5>
+                <p class="text-muted">Comienza creando tu primera novedad</p>
+                <a href="create.php" class="btn btn-warning">
+                  <i class="fas fa-plus me-2"></i>Crear Primer Novedad
+                </a>
+              </div>
+            <?php endif; ?>
+          </div>
+        </div>
+      </main>
     </div>
-  </main>
+  </div>
 
   <?php include '../../../includes/footer.php'; ?>
 

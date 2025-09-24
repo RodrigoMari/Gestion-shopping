@@ -9,19 +9,19 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../../css/style.css">
 </head>
 
 <body>
 
-  <?php include_once __DIR__ . '/../includes/header.php'; ?>
+  <?php include_once __DIR__ . '../../../includes/header.php'; ?>
 
   <main class="container min-vh-100 d-flex flex-column justify-content-center">
     <div class="row justify-content-center">
       <div class="col-md-6">
         <div class="card shadow-lg p-4">
           <h2 class="card-title text-center mb-4 fw-bold fs-2">Registrarse</h2>
-          <form action="../src/usuarios/registrar.php" method="POST">
+          <form action="../../src/usuarios/registrar.php" method="POST">
             <div class="mb-3">
               <label for="email" class="form-label fw-semibold">Correo electrónico</label>
               <input type="email" name="email" id="email" class="form-control" required>
@@ -34,7 +34,7 @@
               <label for="tipoUsuario" class="form-label fw-semibold">Tipo de usuario</label>
               <select name="tipoUsuario" id="tipoUsuario" class="form-select" required>
                 <option value="cliente">Cliente</option>
-                <option value="dueño de local">Dueño de local</option>
+                <option value="dueno de local">Dueño de local</option>
               </select>
             </div>
             <div class="d-grid gap-2">
@@ -47,7 +47,7 @@
     </div>
   </main>
 
-  <?php include_once __DIR__ . '/../includes/footer.php'; ?>
+  <?php include_once __DIR__ . '../../../includes/footer.php'; ?>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
