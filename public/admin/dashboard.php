@@ -38,6 +38,7 @@ $ultimasNovedades = $conn->query("SELECT * FROM novedades ORDER BY codNovedad DE
 
 <body>
   <div class="d-flex">
+    <?php include '../../includes/flash_toast.php'; ?>
     <!-- Sidebar -->
     <?php include '../../includes/sidebar.php'; ?>
 

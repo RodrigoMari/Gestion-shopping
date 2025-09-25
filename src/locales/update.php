@@ -1,5 +1,7 @@
 <?php
 require_once __DIR__ . '/model.php';
+require_once __DIR__ . '/../../config/config.php';
+require_once __DIR__ . '/../helpers/flash.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id_local  = $_POST['id_local'];
@@ -11,9 +13,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $resultado = modificarLocal($conn, $id_local, $nombre, $ubicacion, $rubro, $usuario);
 
     if ($resultado === true) {
-        header("Location: /gestion-shopping/public/admin/locales/locales.php");
+        setFlashMessage('success', 'Local modificado exitosamente');
+        header("Location: " . PUBLIC_URL . "admin/locales/locales.php");
+        exit();
     } else {
-        echo $resultado;
+        $mensajeError = $resultado['error'] ?? 'Credenciales invalidas';
+        setFlashMessage('danger', 'Error al modificar local: ' . $mensajeError);
+        header("Location: " . PUBLIC_URL . "admin/locales/edit.php?id=" . $id_local);
     }
 }
 ?>

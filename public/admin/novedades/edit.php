@@ -2,24 +2,18 @@
 require_once __DIR__ . '../../../../config/database.php';
 require_once __DIR__ . '../../../../src/novedades/model.php';
 
-$success = isset($_GET['success']) ? 'Novedad modificada con éxito.' : null;
-$error = isset($_GET['error']) ? urldecode($_GET['error']) : null;
 
 $novedad = null;
 if (isset($_GET['id'])) {
   $id_novedad = (int)$_GET['id'];
   $novedad = getNovedadById($conn, $id_novedad);
-
-  if ($novedad === null) {
-    header("Location: index.php?error=" . urlencode("Novedad no encontrada"));
-    exit();
-  } elseif (is_string($novedad)) {
-    header("Location: index.php?error=" . urlencode($novedad));
-    exit();
-  }
+    if ($novedad === null) {
+        header("Location: edit.php?id=" . urlencode("Novedad no encontrada"));
+        exit();
+    }
 } else {
-  header("Location: index.php?error=" . urlencode("ID de novedad no especificado"));
-  exit();
+    header("Location: edit.php?id=" . urlencode("ID de novedad no especificado"));
+    exit();
 }
 ?>
 <!DOCTYPE html>
@@ -39,6 +33,7 @@ if (isset($_GET['id'])) {
 
 <body>
   <div class="d-flex">
+    <?php include '../../../includes/flash_toast.php'; ?>
     <?php include '../../../includes/sidebar.php'; ?>
     <div class="flex-grow-1">
       <?php include '../../../includes/admin_header.php'; ?>

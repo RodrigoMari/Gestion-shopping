@@ -54,10 +54,17 @@ function loginUsuario($conn, $email, $password)
         $usuario = $result->fetch_assoc();
 
         if (password_verify($password, $usuario['claveUsuario'])) {
-            if ($usuario['estado'] !== 'validado') {
+            if ($usuario['estado'] == 'pendiente') {
                 return [
                     "success" => false,
                     "error" => "Cuenta no validada aun."
+                ];
+            }
+
+            if ($usuario['estado'] == 'rechazado') {
+                return [
+                    "success" => false,
+                    "error" => "Cuenta rechazada."
                 ];
             }
 
@@ -72,7 +79,7 @@ function loginUsuario($conn, $email, $password)
         } else {
             return [
                 "success" => false,
-                "error" => "Contrasena incorrecta."
+                "error" => "Contraseña incorrecta."
             ];
         }
     } else {
@@ -103,7 +110,7 @@ function aprobarDuenoLocal($conn, $idUsuario)
 
 function rechazarDuenoLocal($conn, $idUsuario)
 {
-    $sql = "DELETE FROM usuarios WHERE codUsuario = ? AND tipoUsuario = 'dueno de local'";
+    $sql = "UPDATE usuarios SET estado = 'rechazado' WHERE codUsuario = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $idUsuario);
     return $stmt->execute();

@@ -13,13 +13,19 @@ $password = $_POST['password'] ?? '';
 $resultado = loginUsuario($conn, $email, $password);
 
 if ($resultado['success']) {
+
     switch ($_SESSION['tipoUsuario']) {
         case 'administrador':
             header('Location: ../../public/admin/dashboard.php');
+            setFlashMessage('success', 'Login exitoso');
             break;
         case 'dueno de local':
+            header('Location: ../../public/locales/index.php');
+            setFlashMessage('success', 'Login exitoso');
+            break;
         case 'cliente':
             header('Location: ../../public/index.php');
+            setFlashMessage('success', 'Login exitoso');
             break;
     }
     exit();

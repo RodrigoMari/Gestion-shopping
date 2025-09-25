@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/model.php';
 require_once __DIR__ . '/../../config/config.php';
+require_once __DIR__ . '/../helpers/flash.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $nombre   = $_POST['nombre_local'];
@@ -11,10 +12,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $resultado = crearLocal($conn, $nombre, $ubicacion, $rubro, $usuario);
 
     if ($resultado === true) {
+        setFlashMessage('success', 'Local creado exitosamente');
         header("Location: " . PUBLIC_URL . "admin/locales/locales.php");
         exit();
     } else {
-        echo $resultado;
+        $mensajeError = $resultado['error'] ?? 'Credenciales invalidas';
+        setFlashMessage('danger', 'Error al crear local: ' . $mensajeError);
+        header("Location: " . PUBLIC_URL . "admin/locales/create.php");
     }
 }
 ?>

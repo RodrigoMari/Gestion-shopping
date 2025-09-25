@@ -6,10 +6,11 @@ function crearLocal($conn, $nombre_local, $ubicacion, $rubro, $id_usuario)
     $sql = "INSERT INTO locales (nombreLocal, ubicacionLocal, rubroLocal, codUsuario) 
             VALUES ('$nombre_local', '$ubicacion', '$rubro', $id_usuario)";
 
-    if ($conn->query($sql) === TRUE) {
+    try {
+        $conn->query($sql);
         return true;
-    } else {
-        return "Error: " . $conn->error;
+    } catch (mysqli_sql_exception $e) {
+        return ["error" => "Usuario inexistente o no dueño de local"];
     }
 }
 
@@ -28,10 +29,11 @@ function modificarLocal($conn, $id_local, $nombre_local, $ubicacion, $rubro, $id
 {
     $sql = "UPDATE locales SET nombreLocal = '$nombre_local', ubicacionLocal = '$ubicacion', rubroLocal = '$rubro', codUsuario = $id_usuario WHERE codLocal = $id_local";
 
-    if ($conn->query($sql) === TRUE) {
+    try {
+        $conn->query($sql);
         return true;
-    } else {
-        return "Error: " . $conn->error;
+    } catch (mysqli_sql_exception $e) {
+        return ["error" => "Usuario inexistente o no dueño de local"];
     }
 }
 

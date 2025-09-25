@@ -1,5 +1,7 @@
 <?php
 require_once __DIR__ . '/model.php';
+require_once __DIR__ . '/../../config/config.php';
+require_once __DIR__ . '/../helpers/flash.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id_local = $_POST['id_local'];
@@ -7,9 +9,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $resultado = borrarLocal($conn, $id_local);
 
     if ($resultado === true) {
-        header("Location: /gestion-shopping/public/admin/locales/locales.php");
+        setFlashMessage('success', 'Local eliminado exitosamente');
+        header("Location: " . PUBLIC_URL . "admin/locales/locales.php");
+        exit();
     } else {
-        echo $resultado;
+        $mensajeError = $resultado['error'] ?? 'Operación fallida, intente nuevamente';
+        setFlashMessage('danger', 'Error al eliminar local: ' . $mensajeError);
+        header("Location: " . PUBLIC_URL . "admin/locales/locales.php");
     }
 }
 ?>

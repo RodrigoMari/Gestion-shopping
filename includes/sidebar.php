@@ -25,7 +25,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
             <i class="fas fa-users"></i> Usuarios
         </a>
         <hr class="bg-secondary mx-3">
-        <a href="../../index.php" class="sidebar-link">
+        <a href="<?= PUBLIC_URL ?>index.php" class="sidebar-link">
             <i class="fas fa-sign-out-alt"></i> Página principal
         </a>
         <a href="<?= PUBLIC_URL ?>admin/admin_logout.php" class="sidebar-link">

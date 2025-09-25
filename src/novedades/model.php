@@ -28,10 +28,11 @@ function modificarNovedad($conn, $id_novedad, $texto_novedad, $fecha_desde, $fec
 {
     $sql = "UPDATE novedades SET textoNovedad = '$texto_novedad', fechaDesdeNovedad = '$fecha_desde', fechaHastaNovedad = '$fecha_hasta', tipoUsuario = '$tipo_usuario' WHERE codNovedad = $id_novedad";
 
-    if ($conn->query($sql) === TRUE) {
+    try {
+        $conn->query($sql);
         return true;
-    } else {
-        return "Error: " . $conn->error;
+    } catch (mysqli_sql_exception $e) {
+        return ["error" => "Operación fallida, intente nuevamente"];
     }
 }
 

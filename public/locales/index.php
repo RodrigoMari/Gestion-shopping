@@ -40,6 +40,7 @@ $solicitudes = getSolicitudesPendientes($conn, $codLocal);
 </head>
 
 <body class="flex-column min-vh-100">
+  <?php include '../../includes/flash_toast.php'; ?>
   <?php include '../../includes/header.php'; ?>
 
   <main class="container my-5 flex-grow-1">

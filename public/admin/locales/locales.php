@@ -23,6 +23,7 @@ $rubrosCount = getLocalesRubrosCount($conn);
 
 <body>
   <div class="d-flex">
+    <?php include '../../../includes/flash_toast.php'; ?>
     <?php include '../../../includes/sidebar.php'; ?>
     <div class="flex-grow-1">
     <?php include '../../../includes/admin_header.php'; ?>

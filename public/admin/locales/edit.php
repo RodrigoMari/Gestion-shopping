@@ -2,24 +2,18 @@
 require_once __DIR__ . '../../../../config/database.php';
 require_once __DIR__ . '../../../../src/locales/model.php';
 
-$success = isset($_GET['success']) ? 'Local modificado con éxito.' : null;
-$error = isset($_GET['error']) ? urldecode($_GET['error']) : null;
-
 $local = null;
-if (isset($_GET['id'])) {
-  $id_local = (int)$_GET['id'];
-  $local = getLocalById($conn, $id_local);
 
-  if ($local === null) {
-    header("Location: index.php?error=" . urlencode("Local no encontrado"));
-    exit();
-  } elseif (is_string($local)) {
-    header("Location: index.php?error=" . urlencode($local));
-    exit();
-  }
+if (isset($_GET['id'])) {
+    $id_local = (int)$_GET['id'];
+    $local = getLocalById($conn, $id_local);
+    if ($local === null) {
+        header("Location: edit.php?id=" . urlencode("Local no encontrado"));
+        exit();
+    }
 } else {
-  header("Location: index.php?error=" . urlencode("ID de local no especificado"));
-  exit();
+    header("Location: edit.php?id=" . urlencode("ID de local no especificado"));
+    exit();
 }
 ?>
 <!DOCTYPE html>
@@ -39,6 +33,7 @@ if (isset($_GET['id'])) {
 
 <body>
   <div class="d-flex">
+    <?php include '../../../includes/flash_toast.php'; ?>
     <?php include '../../../includes/sidebar.php'; ?>
     <div class="flex-grow-1">
     <?php include '../../../includes/admin_header.php'; ?>
