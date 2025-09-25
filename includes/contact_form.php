@@ -1,5 +1,5 @@
 <!-- Sección de Contacto -->
-<section class="contact-section py-5">
+<section id="contacto" class="contact-section py-5">
   <div class="container-fluid">
     <div class="row">
       <!-- Columna Izquierda - Información -->

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 include_once __DIR__ . '/../../config/database.php';
 
 function borrarPromocion($conn, $id_promocion)
@@ -149,6 +149,21 @@ function getPromocionesPorLocal($conn, $codLocal)
     return $stmt->get_result();
 }
 
+function buscarPromociones($conn, $termino)
+{
+    $terminoLike = '%' . $termino . '%';
+
+    $sql = "SELECT p.*, l.nombreLocal,
+                   CONCAT('https://placehold.co/600x400?text=', l.nombreLocal) AS imagenUrl
+            FROM promociones p
+            JOIN locales l ON p.codLocal = l.codLocal
+            WHERE p.estadoPromo = 'aprobada'
+              AND (p.textoPromo LIKE ? OR l.nombreLocal LIKE ? OR l.rubroLocal LIKE ?)";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("sss", $terminoLike, $terminoLike, $terminoLike);
+    $stmt->execute();
+    return $stmt->get_result();
+}
 // Duenos locales
 
 function getPromoById($conn, $codPromo)
@@ -213,4 +228,120 @@ function contarPromosUsadasPorCliente($conn, $codCliente)
     $stmt->execute();
     $result = $stmt->get_result()->fetch_assoc();
     return $result['total'] ?? 0;
+}
+function getUsoPromocionesResumen($conn)
+{
+    $resumen = [
+        'totalSolicitudes' => 0,
+        'clientesUnicos' => 0,
+        'porEstado' => []
+    ];
+
+    $sqlTotales = "SELECT COUNT(*) AS totalSolicitudes, COUNT(DISTINCT codCliente) AS clientesUnicos FROM uso_promociones";
+    $resultTotales = $conn->query($sqlTotales);
+
+    if ($resultTotales instanceof mysqli_result) {
+        $totales = $resultTotales->fetch_assoc();
+        $resumen['totalSolicitudes'] = (int) ($totales['totalSolicitudes'] ?? 0);
+        $resumen['clientesUnicos'] = (int) ($totales['clientesUnicos'] ?? 0);
+        $resultTotales->free();
+    }
+
+    $sqlEstados = "SELECT estado, COUNT(*) AS total FROM uso_promociones GROUP BY estado";
+    $resultEstados = $conn->query($sqlEstados);
+
+    if ($resultEstados instanceof mysqli_result) {
+        while ($row = $resultEstados->fetch_assoc()) {
+            $estado = $row['estado'] ?? 'desconocido';
+            $resumen['porEstado'][$estado] = (int) $row['total'];
+        }
+        $resultEstados->free();
+    }
+
+    return $resumen;
+}
+
+function getTopPromocionesMasUsadas($conn, $limit = 5)
+{
+    $limit = max(1, (int) $limit);
+    $sql = "SELECT p.codPromo, p.textoPromo, l.nombreLocal,
+                   COUNT(u.codPromo) AS totalSolicitudes,
+                   SUM(CASE WHEN u.estado = 'aceptada' THEN 1 ELSE 0 END) AS totalAceptadas,
+                   SUM(CASE WHEN u.estado = 'rechazada' THEN 1 ELSE 0 END) AS totalRechazadas,
+                   SUM(CASE WHEN u.estado IN ('pendiente', 'enviada') THEN 1 ELSE 0 END) AS totalPendientes
+            FROM promociones p
+            JOIN locales l ON p.codLocal = l.codLocal
+            LEFT JOIN uso_promociones u ON p.codPromo = u.codPromo
+            GROUP BY p.codPromo, p.textoPromo, l.nombreLocal
+            HAVING totalSolicitudes > 0
+            ORDER BY totalAceptadas DESC, totalSolicitudes DESC
+            LIMIT $limit";
+
+    $result = $conn->query($sql);
+
+    if (!($result instanceof mysqli_result)) {
+        return [];
+    }
+
+    $promociones = [];
+    while ($row = $result->fetch_assoc()) {
+        $promociones[] = $row;
+    }
+    $result->free();
+
+    return $promociones;
+}
+
+function getUsoPromocionesMensual($conn, $months = 6)
+{
+    $months = max(1, (int) $months);
+    $sql = "SELECT DATE_FORMAT(fechaUsoPromo, '%Y-%m') AS periodo,
+                   COUNT(*) AS totalSolicitudes,
+                   SUM(CASE WHEN estado = 'aceptada' THEN 1 ELSE 0 END) AS totalAceptadas
+            FROM uso_promociones
+            WHERE fechaUsoPromo >= DATE_SUB(CURDATE(), INTERVAL $months MONTH)
+            GROUP BY DATE_FORMAT(fechaUsoPromo, '%Y-%m')
+            ORDER BY periodo ASC";
+
+    $result = $conn->query($sql);
+
+    if (!($result instanceof mysqli_result)) {
+        return [];
+    }
+
+    $periodos = [];
+    while ($row = $result->fetch_assoc()) {
+        $periodos[] = $row;
+    }
+    $result->free();
+
+    return $periodos;
+}
+
+function getUsoPromocionesPorLocal($conn)
+{
+    $sql = "SELECT l.codLocal, l.nombreLocal,
+                   COUNT(u.codPromo) AS totalSolicitudes,
+                   SUM(CASE WHEN u.estado = 'aceptada' THEN 1 ELSE 0 END) AS totalAceptadas,
+                   SUM(CASE WHEN u.estado = 'rechazada' THEN 1 ELSE 0 END) AS totalRechazadas
+            FROM locales l
+            JOIN promociones p ON p.codLocal = l.codLocal
+            LEFT JOIN uso_promociones u ON u.codPromo = p.codPromo
+            GROUP BY l.codLocal, l.nombreLocal
+            HAVING totalSolicitudes > 0
+            ORDER BY totalSolicitudes DESC";
+
+    $result = $conn->query($sql);
+
+    if (!($result instanceof mysqli_result)) {
+        return [];
+    }
+
+    $locales = [];
+    while ($row = $result->fetch_assoc()) {
+        $locales[] = $row;
+    }
+    $result->free();
+
+    return $locales;
 }

@@ -26,10 +26,10 @@ $currentPage = basename($_SERVER['PHP_SELF']);
             <a class="nav-link fw-semibold <?= ($currentPage == 'promociones.php') ? 'active' : '' ?>" href="<?= PUBLIC_URL ?>promociones.php">Promociones</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link fw-semibold" href="#">Locales</a>
+            <a class="nav-link fw-semibold <?= ($currentPage == 'locales.php') ? 'active' : '' ?>" href="<?= PUBLIC_URL ?>locales.php">Locales</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link fw-semibold" href="#">Contacto</a>
+            <a class="nav-link fw-semibold" href="<?= PUBLIC_URL ?>index.php#contacto">Contacto</a>
           </li>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle fw-semibold" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
