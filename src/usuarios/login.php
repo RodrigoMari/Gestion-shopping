@@ -20,7 +20,7 @@ if ($resultado['success']) {
             setFlashMessage('success', 'Login exitoso');
             break;
         case 'dueno de local':
-            header('Location: ../../public/locales/index.php');
+            header('Location: ../../public/index.php');
             setFlashMessage('success', 'Login exitoso');
             break;
         case 'cliente':

@@ -45,7 +45,7 @@ if ($promocionesQuery instanceof mysqli_result) {
   <?php include '../includes/header.php'; ?>
 
   <main class="container my-5">
-    <section class="text-center mb-5" style="margin-top: 6rem;">
+    <section class="text-center mb-5">
       <h1 class="fw-bold">Nuestros Locales</h1>
       <p class="lead text-muted">Descubri todos los locales asociados al shopping y encontra sus promociones vigentes.</p>
     </section>

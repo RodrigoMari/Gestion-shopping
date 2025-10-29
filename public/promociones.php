@@ -46,8 +46,7 @@ if ($result_promociones instanceof mysqli_result) {
 </head>
 
 <body>
-  <?php include __DIR__ . '/../includes/flash_toast.php'; ?>
-
+  <?php include '../includes/flash_toast.php'; ?>
   <?php include '../includes/header.php'; ?>
 
   <main class="container my-5">
