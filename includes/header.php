@@ -5,7 +5,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 <header class="custom-header position-sticky top-0 start-0 w-100" style="z-index: 1030; backdrop-filter: blur(10px); box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
   <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container">
-  <a class="navbar-brand fw-semibold" href="<?= PUBLIC_URL ?>index.php">
+      <a class="navbar-brand fw-semibold" href="<?= PUBLIC_URL ?>index.php">
         <img src="<?= IMG_URL ?>shopping-bag2.PNG" alt="Logo" width="30" height="30" class="d-inline-block align-text-top me-2">
         Rosario Center
       </a>
