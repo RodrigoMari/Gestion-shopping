@@ -132,7 +132,7 @@ $novedadesVigentes = obtenerNovedadesVigentes($conn);
                         </td>
                         <td class="text-muted"><?= htmlspecialchars($novedad['fechaDesdeNovedad']) ?></td>
                         <td class="text-muted"><?= htmlspecialchars($novedad['fechaHastaNovedad']) ?></td>
-                        <td class="text-muted"><?= $novedad['tipoUsuario'] ?></td>
+                        <td class="text-muted"><?= htmlspecialchars($novedad['tipoUsuario']) ?></td>
                         <td class="text-center">
                           <div class="btn-group" role="group">
                             <a href="edit.php?id=<?= $novedad['codNovedad'] ?>" class="btn btn-sm btn-outline-warning" title="Editar">

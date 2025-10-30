@@ -345,3 +345,151 @@ function getUsoPromocionesPorLocal($conn)
 
     return $locales;
 }
+
+function getClientesConUsoPromociones($conn) {
+    $sql = "SELECT DISTINCT u.codCliente, us.nombreUsuario 
+            FROM uso_promociones u
+            JOIN usuarios us ON u.codCliente = us.codUsuario
+            ORDER BY us.nombreUsuario ASC";
+    $result = $conn->query($sql);
+    if (!($result instanceof mysqli_result)) {
+        return [];
+    }
+    $clientes = [];
+    while ($row = $result->fetch_assoc()) {
+        $clientes[] = $row;
+    }
+    $result->free();
+    return $clientes;
+}
+
+function getPromocionesUsadas($conn) {
+    $sql = "SELECT DISTINCT u.codPromo, p.textoPromo 
+            FROM uso_promociones u
+            JOIN promociones p ON u.codPromo = p.codPromo
+            ORDER BY p.textoPromo ASC";
+    $result = $conn->query($sql);
+    if (!($result instanceof mysqli_result)) {
+        return [];
+    }
+    $promociones = [];
+    while ($row = $result->fetch_assoc()) {
+        $promociones[] = $row;
+    }
+    $result->free();
+    return $promociones;
+}
+
+/**
+ * Genera el reporte de uso de promociones con filtros dinámicos.
+ * (Versión actualizada para filtrar por LOCAL)
+ * * @param mysqli $conn La conexión a la base de datos.
+ * @param array $filtros Un array asociativo con los filtros:
+ * 'clientes' (array de codCliente),
+ * 'locales' (array de codLocal),  <-- MODIFICADO
+ * 'estado' (string),
+ * 'fecha_desde' (string 'YYYY-MM-DD'),
+ * 'fecha_hasta' (string 'YYYY-MM-DD').
+ * @return array Los resultados del reporte.
+ */
+function getReporteUsoPromociones($conn, $filtros) {
+    $sql = "SELECT up.codCliente, up.codPromo, up.fechaUsoPromo, up.estado,
+                   u.nombreUsuario AS nombreCliente,
+                   p.textoPromo,
+                   l.nombreLocal
+            FROM uso_promociones up
+            JOIN usuarios u ON up.codCliente = u.codUsuario
+            JOIN promociones p ON up.codPromo = p.codPromo
+            JOIN locales l ON p.codLocal = l.codLocal
+            WHERE 1=1"; // Cláusula WHERE base
+
+    $params = [];
+    $types = "";
+
+    // Filtrar por clientes
+    if (!empty($filtros['clientes']) && is_array($filtros['clientes'])) {
+        $placeholders = implode(',', array_fill(0, count($filtros['clientes']), '?'));
+        $sql .= " AND up.codCliente IN ($placeholders)";
+        $types .= str_repeat('i', count($filtros['clientes']));
+        $params = array_merge($params, $filtros['clientes']);
+    }
+
+    // --- INICIO DE MODIFICACIÓN ---
+    // Filtrar por locales (en lugar de promociones)
+    if (!empty($filtros['locales']) && is_array($filtros['locales'])) {
+        $placeholders = implode(',', array_fill(0, count($filtros['locales']), '?'));
+        // Filtramos por p.codLocal (de la tabla promociones)
+        $sql .= " AND p.codLocal IN ($placeholders)"; 
+        $types .= str_repeat('i', count($filtros['locales']));
+        $params = array_merge($params, $filtros['locales']);
+    }
+    // --- FIN DE MODIFICACIÓN ---
+
+    // Filtrar por estado
+    if (!empty($filtros['estado'])) {
+        $sql .= " AND up.estado = ?";
+        $types .= "s";
+        $params[] = $filtros['estado'];
+    }
+
+    // Filtrar por fecha desde
+    if (!empty($filtros['fecha_desde'])) {
+        $sql .= " AND up.fechaUsoPromo >= ?";
+        $types .= "s";
+        $params[] = $filtros['fecha_desde'];
+    }
+
+    // Filtrar por fecha hasta
+    if (!empty($filtros['fecha_hasta'])) {
+        $sql .= " AND up.fechaUsoPromo <= ?";
+        $types .= "s";
+        $params[] = $filtros['fecha_hasta'];
+    }
+
+    $sql .= " ORDER BY up.fechaUsoPromo DESC";
+
+    $stmt = $conn->prepare($sql);
+
+    if ($stmt === false) {
+        error_log("Error al preparar la consulta: " . $conn->error);
+        return [];
+    }
+
+    if (!empty($params)) {
+        $stmt->bind_param($types, ...$params);
+    }
+
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if (!($result instanceof mysqli_result)) {
+        return [];
+    }
+
+    $reporte = [];
+    while ($row = $result->fetch_assoc()) {
+        $reporte[] = $row;
+    }
+    $result->free();
+    $stmt->close();
+
+    return $reporte;
+}
+
+function getLocalesConPromociones($conn) {
+    $sql = "SELECT DISTINCT l.codLocal, l.nombreLocal 
+            FROM locales l
+            JOIN promociones p ON l.codLocal = p.codLocal
+            ORDER BY l.nombreLocal ASC";
+
+    $result = $conn->query($sql);
+    if (!($result instanceof mysqli_result)) {
+        return [];
+    }
+    $locales = [];
+    while ($row = $result->fetch_assoc()) {
+        $locales[] = $row;
+    }
+    $result->free();
+    return $locales;
+}

@@ -40,13 +40,21 @@ $conversion = $totalSolicitudes > 0 ? round(($aceptadas / $totalSolicitudes) * 1
 
       <main class="admin-main">
         <div class="container-fluid">
-          <div class="row mb-4">
-            <div class="col-12">
+          <div class="row mb-4 align-items-center">
+            
+            <div class="col-md-8">
               <h1 class="h3">Uso de descuentos</h1>
               <p class="text-muted mb-0">Seguimiento de solicitudes y redenciones de promociones por parte de los clientes.</p>
             </div>
-          </div>
 
+            <div class="col-md-4 text-md-end">
+              <a href="reporte_uso_promociones.php" class="btn btn-warning">
+                <i class="fas fa-plus me-2"></i>Generador de reportes
+              </a>
+            </div>
+
+          </div>
+          
           <div class="row g-4 mb-5">
             <div class="col-12 col-md-6 col-xl-3">
               <div class="card admin-card stats-card h-100">
@@ -249,4 +257,3 @@ $conversion = $totalSolicitudes > 0 ? round(($aceptadas / $totalSolicitudes) * 1
 </body>
 
 </html>
-

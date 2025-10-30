@@ -88,7 +88,7 @@ if ($result_promociones instanceof mysqli_result) {
                     <button type="submit" class="btn btn-sm btn-warning">Solicitar Promocion</button>
                   </form>
                 <?php else: ?>
-                  <a href="autenticacion/login.php" class="btn btn-sm btn-warning">Inicia sesion para solicitar</a>
+                  <a href="autenticacion/login.php" class="btn btn-sm btn-warning">Inicia sesion como cliente para solicitar</a>
                 <?php endif; ?>
               </div>
             </div>

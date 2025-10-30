@@ -2,7 +2,7 @@
 require_once __DIR__ . '../../../../config/database.php';
 require_once __DIR__ . '/../../../src/usuarios/model.php';
 
-$duenosPendientes = getDuenosPendientes($conn);
+$duenosPendientes = getAllDuenos($conn);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -78,21 +78,34 @@ $duenosPendientes = getDuenosPendientes($conn);
                         <td class="fw-semibold text-primary">#<?= $row['codUsuario'] ?></td>
                         <td><?= htmlspecialchars($row['nombreUsuario']) ?></td>
                         <td>
-                          <span class="badge bg-warning text-dark"><?= $row['estado'] ?></span>
+                          <?php
+                          $estado = $row['estado'];
+                          $badgeClass = '';
+                          if ($estado == 'pendiente') {
+                            $badgeClass = 'bg-warning text-dark';
+                          } elseif ($estado == 'validado') {
+                            $badgeClass = 'bg-success';
+                          } elseif ($estado == 'rechazado') {
+                            $badgeClass = 'bg-danger';
+                          }
+                          ?>
+                          <span class="badge <?= $badgeClass ?>"><?= $estado ?></span>
                         </td>
                         <td class="text-center">
-                          <form method="POST" action="<?= SRC_URL ?>usuarios/aprobar_duenos.php" class="d-inline">
-                            <input type="hidden" name="id_usuario" value="<?= $row['codUsuario'] ?>">
-                            <button type="submit" name="accion" value="aprobar" class="btn btn-sm btn-success" title="Aprobar">
-                              <i class="fas fa-check"></i> Aprobar
-                            </button>
-                          </form>
-                          <form method="POST" action="<?= SRC_URL ?>usuarios/aprobar_duenos.php" class="d-inline">
-                            <input type="hidden" name="id_usuario" value="<?= $row['codUsuario'] ?>">
-                            <button type="submit" name="accion" value="rechazar" class="btn btn-sm btn-danger" title="Rechazar" onclick="return confirm('¿Seguro que quieres rechazar este usuario?')">
-                              <i class="fas fa-times"></i> Rechazar
-                            </button>
-                          </form>
+                          <?php if ($row['estado'] == 'pendiente'): ?>
+                            <form method="POST" action="<?= SRC_URL ?>usuarios/aprobar_duenos.php" class="d-inline">
+                              <input type="hidden" name="id_usuario" value="<?= $row['codUsuario'] ?>">
+                              <button type="submit" name="accion" value="aprobar" class="btn btn-sm btn-success" title="Aprobar">
+                                <i class="fas fa-check"></i> Aprobar
+                              </button>
+                            </form>
+                            <form method="POST" action="<?= SRC_URL ?>usuarios/aprobar_duenos.php" class="d-inline">
+                              <input type="hidden" name="id_usuario" value="<?= $row['codUsuario'] ?>">
+                              <button type="submit" name="accion" value="rechazar" class="btn btn-sm btn-danger" title="Rechazar" onclick="return confirm('¿Seguro que quieres rechazar este usuario?')">
+                                <i class="fas fa-times"></i> Rechazar
+                              </button>
+                            </form>
+                          <?php endif; ?>
                         </td>
                       </tr>
                     <?php endwhile; ?>

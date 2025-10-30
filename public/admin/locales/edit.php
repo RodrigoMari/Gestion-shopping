@@ -6,30 +6,24 @@ require_once __DIR__ . '../../../../src/usuarios/model.php';
 $local = null;
 $propietario_actual = null;
 
-// 1. Obtener la lista de todos los posibles dueños
 $result_duenos = getAllDuenos($conn);
 
-// 2. Validar el ID y obtener el local
 if (isset($_GET['id'])) {
     $id_local = (int)$_GET['id'];
     $local = getLocalById($conn, $id_local);
 
     if ($local === null) {
-        // Redirige a la página anterior (locales.php) con un error
         header("Location: locales.php?error=" . urlencode("Local no encontrado"));
         exit();
     }
     
-    // 3. Obtener los datos del propietario actual
     $propietario_actual = getUserById($conn, $local['codUsuario']);
 
 } else {
-    // Si no hay ID, no se puede editar. Redirige a la lista.
     header("Location: locales.php?error=" . urlencode("ID de local no especificado"));
     exit();
 }
 
-// Variables para los mensajes
 $error = isset($_GET['error']) ? urldecode($_GET['error']) : null;
 $success = isset($_GET['success']) ? urldecode($_GET['success']) : null;
 
