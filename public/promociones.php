@@ -57,12 +57,6 @@ if ($result_promociones instanceof mysqli_result) {
       <div class="col-12 col-md-5">
         <input type="text" class="form-control" name="buscar" placeholder="Buscar por local, rubro o Promocion" value="<?= htmlspecialchars($busqueda) ?>">
       </div>
-      <div class="col-6 col-md-3 col-lg-2">
-        <input type="number" class="form-control" name="codLocal" min="1" placeholder="Codigo de local" value="<?= htmlspecialchars($codLocal ?? '') ?>">
-      </div>
-      <div class="col-6 col-md-3 col-lg-2">
-        <input type="number" class="form-control" name="codPromo" min="1" placeholder="Codigo de Promocion" value="<?= htmlspecialchars($codPromo ?? '') ?>">
-      </div>
       <div class="col-12 col-md-auto d-flex align-items-center gap-2">
         <button type="submit" class="btn btn-warning">Buscar</button>
         <?php if ($hasFilters): ?>

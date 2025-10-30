@@ -1,20 +1,38 @@
 <?php
 require_once __DIR__ . '../../../../config/database.php';
 require_once __DIR__ . '../../../../src/locales/model.php';
+require_once __DIR__ . '../../../../src/usuarios/model.php';
 
 $local = null;
+$propietario_actual = null;
 
+// 1. Obtener la lista de todos los posibles dueños
+$result_duenos = getAllDuenos($conn);
+
+// 2. Validar el ID y obtener el local
 if (isset($_GET['id'])) {
     $id_local = (int)$_GET['id'];
     $local = getLocalById($conn, $id_local);
+
     if ($local === null) {
-        header("Location: edit.php?id=" . urlencode("Local no encontrado"));
+        // Redirige a la página anterior (locales.php) con un error
+        header("Location: locales.php?error=" . urlencode("Local no encontrado"));
         exit();
     }
+    
+    // 3. Obtener los datos del propietario actual
+    $propietario_actual = getUserById($conn, $local['codUsuario']);
+
 } else {
-    header("Location: edit.php?id=" . urlencode("ID de local no especificado"));
+    // Si no hay ID, no se puede editar. Redirige a la lista.
+    header("Location: locales.php?error=" . urlencode("ID de local no especificado"));
     exit();
 }
+
+// Variables para los mensajes
+$error = isset($_GET['error']) ? urldecode($_GET['error']) : null;
+$success = isset($_GET['success']) ? urldecode($_GET['success']) : null;
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -23,7 +41,7 @@ if (isset($_GET['id'])) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Editar Local - Rosario Center Admin</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
@@ -57,14 +75,14 @@ if (isset($_GET['id'])) {
               </div>
               <div class="card-body p-4">
 
-                <?php if (isset($success)): ?>
+                <?php if ($success): ?>
                   <div class="alert alert-success alert-dismissible fade show" role="alert">
                     <i class="fas fa-check-circle me-2"></i><?= $success ?>
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                   </div>
                 <?php endif; ?>
 
-                <?php if (isset($error)): ?>
+                <?php if ($error): ?>
                   <div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <i class="fas fa-exclamation-triangle me-2"></i><?= $error ?>
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
@@ -78,7 +96,16 @@ if (isset($_GET['id'])) {
                   <p class="mb-1"><strong>Nombre:</strong> <?= htmlspecialchars($local['nombreLocal']) ?></p>
                   <p class="mb-1"><strong>Ubicación:</strong> <?= htmlspecialchars($local['ubicacionLocal']) ?></p>
                   <p class="mb-1"><strong>Rubro:</strong> <?= htmlspecialchars($local['rubroLocal']) ?></p>
-                  <p class="mb-0"><strong>Usuario:</strong> #<?= $local['codUsuario'] ?></p>
+                  <p class="mb-0"><strong>Usuario:</strong>
+                    <?php
+                    // Lógica para mostrar el nombre del propietario en el resumen
+                    if ($propietario_actual && isset($propietario_actual['nombreUsuario'])) {
+                        echo htmlspecialchars($propietario_actual['nombreUsuario']);
+                    } else {
+                        echo "Usuario #" . htmlspecialchars($local['codUsuario']);
+                    }
+                    ?>
+                  </p>
                 </div>
 
                 <form method="post" action="<?= SRC_URL ?>locales/update.php">
@@ -135,16 +162,31 @@ if (isset($_GET['id'])) {
                     </div>
 
                     <div class="col-md-6 mb-4">
-                      <label for="id_usuario" class="form-label fw-semibold">
-                        <i class="fas fa-user me-1"></i>ID del Usuario Propietario
-                      </label>
-                      <input type="number" class="form-control form-control-lg"
-                        id="id_usuario" name="id_usuario" required
-                        placeholder="Ej: 123"
-                        value="<?= isset($_POST['id_usuario']) ? htmlspecialchars($_POST['id_usuario']) : $local['codUsuario'] ?>">
-                      <div class="form-text">
-                        <i class="fas fa-info-circle me-1"></i>Ingrese el ID del usuario propietario de este local
-                      </div>
+                        <label for="id_usuario" class="form-label fw-semibold">
+                            <i class="fas fa-user me-1"></i>Propietario del Local
+                        </label>
+                        <select class="form-select form-select-lg" id="id_usuario" name="id_usuario" required>
+                            <option value="">Seleccione un propietario</option>
+                            <?php
+                            
+                            $selected_id = isset($_POST['id_usuario']) ? $_POST['id_usuario'] : $local['codUsuario'];
+
+                            if ($result_duenos && mysqli_num_rows($result_duenos) > 0) {
+                                while ($dueno = mysqli_fetch_assoc($result_duenos)) {
+                                    
+                                    $id_propietario = htmlspecialchars($dueno['codUsuario']);
+                                    $nombre_propietario = htmlspecialchars($dueno['nombreUsuario']);
+
+                                    $selected = ($id_propietario == $selected_id) ? 'selected' : '';
+
+                                    echo "<option value=\"$id_propietario\" $selected>$nombre_propietario (ID: $id_propietario)</option>";
+                                }
+                            }
+                            ?>
+                        </select>
+                        <div class="form-text">
+                            <i class="fas fa-info-circle me-1"></i>Seleccione el usuario que será propietario de este local.
+                        </div>
                     </div>
                   </div>
 
@@ -165,7 +207,6 @@ if (isset($_GET['id'])) {
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" xintegrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
-
 </html>

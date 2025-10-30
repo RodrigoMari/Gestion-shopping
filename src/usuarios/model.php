@@ -140,6 +140,18 @@ function getAllUsuarios($conn)
     }
 }
 
+function getAllDuenos($conn)
+{
+    $sql = "SELECT * FROM usuarios WHERE tipoUsuario = 'dueno de local' ORDER BY codUsuario ASC";
+    $result = $conn->query($sql);
+
+    if ($result) {
+        return $result;
+    } else {
+        return "Error: " . $conn->error;
+    }
+}
+
 function actualizarCategoriaCliente($conn, $codCliente)
 {
     $sql = "SELECT COUNT(*) as total 

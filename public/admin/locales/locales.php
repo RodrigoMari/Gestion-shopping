@@ -1,10 +1,12 @@
 <?php
 require_once __DIR__ . '../../../../config/database.php';
 require_once __DIR__ . '/../../../src/locales/model.php';
+require_once __DIR__ . '/../../../src/usuarios/model.php';
 
 $locales = getAllLocales($conn);
 $propietariosCount = getLocalesPropietariosCount($conn);
 $rubrosCount = getLocalesRubrosCount($conn);
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -118,7 +120,9 @@ $rubrosCount = getLocalesRubrosCount($conn);
                     </tr>
                   </thead>
                   <tbody>
-                    <?php while ($local = $locales->fetch_assoc()): ?>
+                    <?php while ($local = $locales->fetch_assoc()): 
+                      $dueno = getUserById($conn, $local['codUsuario']);
+                      ?>
                       <tr>
                         <td class="fw-semibold text-primary">#<?= $local['codLocal'] ?></td>
                         <td>
@@ -135,7 +139,7 @@ $rubrosCount = getLocalesRubrosCount($conn);
                         <td>
                           <span class="badge bg-light text-dark border"><?= htmlspecialchars($local['rubroLocal']) ?></span>
                         </td>
-                        <td class="text-muted">Usuario #<?= $local['codUsuario'] ?></td>
+                        <td class="text-muted"><?= $dueno['nombreUsuario'] ?></td>
                         <td class="text-center">
                           <div class="btn-group" role="group">
                             <a href="edit.php?id=<?= $local['codLocal'] ?>" class="btn btn-sm btn-outline-warning" title="Editar">

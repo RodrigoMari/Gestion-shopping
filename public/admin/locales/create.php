@@ -1,6 +1,14 @@
 <?php
+require_once '../../../config/database.php';
+require_once '../../../config/config.php';
+require_once '../../../src/usuarios/model.php';
+
 //$success = isset($_GET['success']) ? 'Local creado con éxito.' : null;
 $error = isset($_GET['error']) ? urldecode($_GET['error']) : null;
+
+// Asumimos que $conn (conexión a BBDD) está definida en un archivo incluido antes
+// por ejemplo en admin_header.php o similar, ya que getAllUsuariosDuenos la necesita.
+$result_duenos = getAllDuenos($conn);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -24,7 +32,6 @@ $error = isset($_GET['error']) ? urldecode($_GET['error']) : null;
     <div class="flex-grow-1">
     <?php include '../../../includes/admin_header.php'; ?>
       <main class="container my-5">
-        <!-- Breadcrumb -->
         <nav aria-label="breadcrumb" class="mb-4">
           <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="<?= PUBLIC_URL ?>admin/dashboard.php" class="text-decoration-none">Admin</a></li>
@@ -104,16 +111,27 @@ $error = isset($_GET['error']) ? urldecode($_GET['error']) : null;
                     </div>
 
                     <div class="col-md-6 mb-4">
-                      <label for="id_usuario" class="form-label fw-semibold">
-                        <i class="fas fa-user me-1"></i>ID del Usuario Propietario
-                      </label>
-                      <input type="number" class="form-control form-control-lg"
-                        id="id_usuario" name="id_usuario" required
-                        placeholder="Ej: 123"
-                        value="<?= isset($_POST['id_usuario']) ? htmlspecialchars($_POST['id_usuario']) : '' ?>">
-                      <div class="form-text">
-                        <i class="fas fa-info-circle me-1"></i>Ingrese el ID del usuario que será propietario de este local
-                      </div>
+                        <label for="id_usuario" class="form-label fw-semibold">
+                            <i class="fas fa-user me-1"></i>Propietario del Local
+                        </label>
+                        <select class="form-select form-select-lg" id="id_usuario" name="id_usuario" required>
+                            <option value="">Seleccione un propietario</option>
+                            <?php
+                            if ($result_duenos && mysqli_num_rows($result_duenos) > 0) {
+                                while ($dueno = mysqli_fetch_assoc($result_duenos)) {
+                                    $id_propietario = htmlspecialchars($dueno['codUsuario']);
+                                    $nombre_propietario = htmlspecialchars($dueno['nombreUsuario']);
+
+                                    $selected = (isset($_POST['id_usuario']) && $_POST['id_usuario'] == $dueno['codUsuario']) ? 'selected' : '';
+
+                                    echo "<option value=\"$id_propietario\" $selected>$nombre_propietario (ID: $id_propietario)</option>";
+                                }
+                            }
+                            ?>
+                        </select>
+                        <div class="form-text">
+                            <i class="fas fa-info-circle me-1"></i>Seleccione el usuario que será propietario de este local.
+                        </div>
                     </div>
                   </div>
 
@@ -134,8 +152,6 @@ $error = isset($_GET['error']) ? urldecode($_GET['error']) : null;
     </div>
   </div>
 
-
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
-
 </html>
