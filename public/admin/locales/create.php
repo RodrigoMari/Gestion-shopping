@@ -68,12 +68,12 @@ $result_duenos = getAllDuenos($conn);
                   <div class="row">
                     <div class="col-md-6 mb-4">
                       <label for="nombre_local" class="form-label fw-semibold">
-                        <i class="fas fa-store me-1"></i>Nombre del Local
+                        <i class="fas fa-store me-1"></i>Nombre del Local <span class="text-danger">*</span>
                       </label>
                       <input type="text" class="form-control form-control-lg"
-                        id="nombre_local" name="nombre_local" required
+                        id="nombre_local" name="nombre_local" required minlength="2" maxlength="100"
+                        pattern="^[^<>]{2,100}$" title="Entre 2 y 100 caracteres. No se permiten < ni >"
                         placeholder="Ej: Librería Cervantes"
-                        maxlength="100"
                         value="<?= isset($_POST['nombre_local']) ? htmlspecialchars($_POST['nombre_local']) : '' ?>">
                       <div class="form-text">
                         <i class="fas fa-info-circle me-1"></i>Máximo 100 caracteres
@@ -82,12 +82,12 @@ $result_duenos = getAllDuenos($conn);
 
                     <div class="col-md-6 mb-4">
                       <label for="ubicacion" class="form-label fw-semibold">
-                        <i class="fas fa-map-marker-alt me-1"></i>Ubicación
+                        <i class="fas fa-map-marker-alt me-1"></i>Ubicación <span class="text-danger">*</span>
                       </label>
                       <input type="text" class="form-control form-control-lg"
-                        id="ubicacion" name="ubicacion" required
+                        id="ubicacion" name="ubicacion" required minlength="1" maxlength="50"
+                        pattern="^[^<>]{1,50}$" title="Entre 1 y 50 caracteres. No se permiten < ni >"
                         placeholder="Ej: Local 105"
-                        maxlength="50"
                         value="<?= isset($_POST['ubicacion']) ? htmlspecialchars($_POST['ubicacion']) : '' ?>">
                       <div class="form-text">
                         <i class="fas fa-info-circle me-1"></i>Máximo 50 caracteres
@@ -98,7 +98,7 @@ $result_duenos = getAllDuenos($conn);
                   <div class="row">
                     <div class="col-md-6 mb-4">
                       <label for="rubro" class="form-label fw-semibold">
-                        <i class="fas fa-tags me-1"></i>Rubro
+                        <i class="fas fa-tags me-1"></i>Rubro <span class="text-danger">*</span>
                       </label>
                       <select class="form-select form-select-lg" id="rubro" name="rubro" required>
                         <option value="">Seleccione un rubro</option>
@@ -111,9 +111,9 @@ $result_duenos = getAllDuenos($conn);
                     </div>
 
                     <div class="col-md-6 mb-4">
-                        <label for="id_usuario" class="form-label fw-semibold">
-                            <i class="fas fa-user me-1"></i>Propietario del Local
-                        </label>
+            <label for="id_usuario" class="form-label fw-semibold">
+              <i class="fas fa-user me-1"></i>Propietario del Local <span class="text-danger">*</span>
+            </label>
                         <select class="form-select form-select-lg" id="id_usuario" name="id_usuario" required>
                             <option value="">Seleccione un propietario</option>
                             <?php

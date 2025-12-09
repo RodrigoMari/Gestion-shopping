@@ -63,23 +63,23 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     <form method="POST" class="card shadow-sm p-4">
       <div class="mb-3">
-        <label for="textoPromo" class="form-label">Texto de la Promoción</label>
-        <input type="text" name="textoPromo" id="textoPromo" class="form-control" maxlength="200" required>
+  <label for="textoPromo" class="form-label">Texto de la Promoción <span class="text-danger">*</span></label>
+  <input type="text" name="textoPromo" id="textoPromo" class="form-control" maxlength="200" minlength="5" required pattern="^[^<>]{5,200}$" title="Entre 5 y 200 caracteres. No se permiten < ni >">
       </div>
 
       <div class="row mb-3">
         <div class="col-md-6">
-          <label for="fechaDesdePromo" class="form-label">Fecha Desde</label>
-          <input type="date" name="fechaDesdePromo" id="fechaDesdePromo" class="form-control" required>
+          <label for="fechaDesdePromo" class="form-label">Fecha Desde <span class="text-danger">*</span></label>
+          <input type="date" name="fechaDesdePromo" id="fechaDesdePromo" class="form-control" required min="<?= date('Y-m-d') ?>">
         </div>
         <div class="col-md-6">
-          <label for="fechaHastaPromo" class="form-label">Fecha Hasta</label>
-          <input type="date" name="fechaHastaPromo" id="fechaHastaPromo" class="form-control" required>
+          <label for="fechaHastaPromo" class="form-label">Fecha Hasta <span class="text-danger">*</span></label>
+          <input type="date" name="fechaHastaPromo" id="fechaHastaPromo" class="form-control" required min="<?= date('Y-m-d') ?>">
         </div>
       </div>
 
       <div class="mb-3">
-        <label for="categoriaCliente" class="form-label">Categoría mínima de cliente</label>
+  <label for="categoriaCliente" class="form-label">Categoría mínima de cliente <span class="text-danger">*</span></label>
         <select name="categoriaCliente" id="categoriaCliente" class="form-select" required>
           <option value="Inicial">Inicial</option>
           <option value="Medium">Medium</option>
@@ -88,7 +88,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       </div>
 
       <div class="mb-3">
-        <label for="diasSemana" class="form-label">Día de la semana</label>
+  <label for="diasSemana" class="form-label">Día de la semana <span class="text-danger">*</span></label>
         <select name="diasSemana" id="diasSemana" class="form-select" required>
           <option value="0">Domingo</option>
           <option value="1">Lunes</option>

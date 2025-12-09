@@ -43,11 +43,11 @@
           <h2 class="card-title text-center mb-4 fw-bold fs-2">Iniciar Sesion</h2>
           <form action="../../src/usuarios/login.php" method="POST">
             <div class="mb-3">
-              <label for="email" class="form-label fw-semibold">Correo electronico</label>
+              <label for="email" class="form-label fw-semibold">Correo electronico <span class="text-danger">*</span></label>
               <input type="email" class="form-control" id="email" name="email" required>
             </div>
             <div class="mb-3">
-              <label for="password" class="form-label fw-semibold">Contrasena</label>
+              <label for="password" class="form-label fw-semibold">Contrasena <span class="text-danger">*</span></label>
               <div class="position-relative">
                 <input type="password" class="form-control" id="password" name="password" required>
                 <i class="fas fa-eye password-toggle" id="togglePassword"></i>
