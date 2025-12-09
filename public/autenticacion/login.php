@@ -10,6 +10,25 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .password-toggle {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #6c757d;
+    }
+
+    .password-toggle:hover {
+      color: #495057;
+    }
+
+    .position-relative {
+      position: relative;
+    }
+  </style>
 </head>
 
 <body>
@@ -27,9 +46,15 @@
               <label for="email" class="form-label fw-semibold">Correo electronico</label>
               <input type="email" class="form-control" id="email" name="email" required>
             </div>
-            <div class="mb-5">
+            <div class="mb-3">
               <label for="password" class="form-label fw-semibold">Contrasena</label>
-              <input type="password" class="form-control" id="password" name="password" required>
+              <div class="position-relative">
+                <input type="password" class="form-control" id="password" name="password" required>
+                <i class="fas fa-eye password-toggle" id="togglePassword"></i>
+              </div>
+            </div>
+            <div class="mb-3 text-end">
+              <a href="recuperar_password.php" class="text-decoration-none">¿Olvidaste tu contraseña?</a>
             </div>
             <div class="d-grid gap-2">
               <button type="submit" class="btn btn-warning btn-lg">Iniciar Sesion</button>
@@ -44,7 +69,18 @@
   <?php include_once __DIR__ . '../../../includes/footer.php'; ?>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  <script>
+    // Toggle password visibility
+    const togglePassword = document.querySelector('#togglePassword');
+    const password = document.querySelector('#password');
+
+    togglePassword.addEventListener('click', function() {
+      const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+      password.setAttribute('type', type);
+      this.classList.toggle('fa-eye');
+      this.classList.toggle('fa-eye-slash');
+    });
+  </script>
 </body>
 
 </html>
-

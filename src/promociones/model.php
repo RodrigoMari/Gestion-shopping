@@ -151,6 +151,7 @@ function getPromocionesPorLocal($conn, $codLocal)
 
 function buscarPromociones($conn, $termino)
 {
+    $termino = trim($termino);
     $terminoLike = '%' . $termino . '%';
 
     $sql = "SELECT p.*, l.nombreLocal,
@@ -177,6 +178,62 @@ function getPromoById($conn, $codPromo)
     $stmt->bind_param("i", $codPromo);
     $stmt->execute();
     return $stmt->get_result()->fetch_assoc();
+}
+
+function filtrarPromociones($conn, $texto = '', $rubro = '', $categoriaCliente = null)
+{
+    $sql = "SELECT p.*, l.nombreLocal, l.rubroLocal,
+                   CONCAT('https://placehold.co/600x400?text=', l.nombreLocal) AS imagenUrl
+            FROM promociones p
+            JOIN locales l ON p.codLocal = l.codLocal
+            WHERE p.estadoPromo = 'aprobada'";
+
+    $params = [];
+    $types = "";
+
+    if (!empty($texto)) {
+        $texto = trim($texto);
+        $textoLike = '%' . $texto . '%';
+        $sql .= " AND (p.textoPromo LIKE ? OR l.nombreLocal LIKE ?)";
+        $types .= "ss";
+        $params[] = $textoLike;
+        $params[] = $textoLike;
+    }
+
+    if (!empty($rubro)) {
+        $sql .= " AND l.rubroLocal = ?";
+        $types .= "s";
+        $params[] = $rubro;
+    }
+
+    if ($categoriaCliente !== null) {
+        $niveles = [];
+        switch ($categoriaCliente) {
+            case 'Inicial':
+                $niveles = ['Inicial'];
+                break;
+            case 'Medium':
+                $niveles = ['Inicial', 'Medium'];
+                break;
+            case 'Premium':
+                $niveles = ['Inicial', 'Medium', 'Premium'];
+                break;
+        }
+        if (!empty($niveles)) {
+            $placeholders = implode(',', array_fill(0, count($niveles), '?'));
+            $sql .= " AND (p.categoriaCliente IN ($placeholders) OR p.categoriaCliente IS NULL)";
+            $types .= str_repeat('s', count($niveles));
+            foreach ($niveles as $nivel) $params[] = $nivel;
+        }
+    }
+
+    $sql .= " ORDER BY p.fechaDesdePromo DESC";
+    $stmt = $conn->prepare($sql);
+    if (!empty($params)) {
+        $stmt->bind_param($types, ...$params);
+    }
+    $stmt->execute();
+    return $stmt->get_result();
 }
 
 function contarUsoPromocion($conn, $codPromo)
@@ -346,7 +403,8 @@ function getUsoPromocionesPorLocal($conn)
     return $locales;
 }
 
-function getClientesConUsoPromociones($conn) {
+function getClientesConUsoPromociones($conn)
+{
     $sql = "SELECT DISTINCT u.codCliente, us.nombreUsuario 
             FROM uso_promociones u
             JOIN usuarios us ON u.codCliente = us.codUsuario
@@ -363,7 +421,8 @@ function getClientesConUsoPromociones($conn) {
     return $clientes;
 }
 
-function getPromocionesUsadas($conn) {
+function getPromocionesUsadas($conn)
+{
     $sql = "SELECT DISTINCT u.codPromo, p.textoPromo 
             FROM uso_promociones u
             JOIN promociones p ON u.codPromo = p.codPromo
@@ -392,7 +451,8 @@ function getPromocionesUsadas($conn) {
  * 'fecha_hasta' (string 'YYYY-MM-DD').
  * @return array Los resultados del reporte.
  */
-function getReporteUsoPromociones($conn, $filtros) {
+function getReporteUsoPromociones($conn, $filtros)
+{
     $sql = "SELECT up.codCliente, up.codPromo, up.fechaUsoPromo, up.estado,
                    u.nombreUsuario AS nombreCliente,
                    p.textoPromo,
@@ -419,7 +479,7 @@ function getReporteUsoPromociones($conn, $filtros) {
     if (!empty($filtros['locales']) && is_array($filtros['locales'])) {
         $placeholders = implode(',', array_fill(0, count($filtros['locales']), '?'));
         // Filtramos por p.codLocal (de la tabla promociones)
-        $sql .= " AND p.codLocal IN ($placeholders)"; 
+        $sql .= " AND p.codLocal IN ($placeholders)";
         $types .= str_repeat('i', count($filtros['locales']));
         $params = array_merge($params, $filtros['locales']);
     }
@@ -476,7 +536,8 @@ function getReporteUsoPromociones($conn, $filtros) {
     return $reporte;
 }
 
-function getLocalesConPromociones($conn) {
+function getLocalesConPromociones($conn)
+{
     $sql = "SELECT DISTINCT l.codLocal, l.nombreLocal 
             FROM locales l
             JOIN promociones p ON l.codLocal = p.codLocal

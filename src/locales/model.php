@@ -49,6 +49,19 @@ function getAllLocales($conn)
     }
 }
 
+function getAllRubros($conn)
+{
+    $sql = "SELECT DISTINCT rubroLocal FROM locales WHERE rubroLocal IS NOT NULL AND rubroLocal != '' ORDER BY rubroLocal ASC";
+    $result = $conn->query($sql);
+    $rubros = [];
+    if ($result) {
+        while ($row = $result->fetch_assoc()) {
+            $rubros[] = $row['rubroLocal'];
+        }
+    }
+    return $rubros;
+}
+
 function getLocalesPropietariosCount($conn)
 {
     $sql = "SELECT COUNT(DISTINCT codUsuario) AS total FROM locales";

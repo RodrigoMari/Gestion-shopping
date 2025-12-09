@@ -1,33 +1,31 @@
 <?php
 require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../src/promociones/model.php';
+require_once __DIR__ . '/../src/locales/model.php';
+
+$rubrosDisponibles = getAllRubros($conn);
 
 $categoria = isset($_SESSION['categoriaCliente']) ? $_SESSION['categoriaCliente'] : null;
 $busqueda = isset($_GET['buscar']) ? trim($_GET['buscar']) : '';
+$rubroSeleccionado = isset($_GET['rubro']) ? $_GET['rubro'] : '';
 $codLocal = isset($_GET['codLocal']) && $_GET['codLocal'] !== '' ? (int) $_GET['codLocal'] : null;
-$codPromo = isset($_GET['codPromo']) && $_GET['codPromo'] !== '' ? (int) $_GET['codPromo'] : null;
 
-$hasFilters = ($busqueda !== '' || $codLocal !== null || $codPromo !== null);
+$hasFilters = ($busqueda !== '' || $rubroSeleccionado !== '' || $codLocal !== null);
 
-if ($codPromo) {
-    $promo = getPromoById($conn, $codPromo);
-    $result_promociones = $promo ? [$promo] : [];
-} elseif ($codLocal) {
-    $result_promociones = getPromocionesPorLocal($conn, $codLocal);
-} elseif ($busqueda !== '') {
-    $result_promociones = buscarPromociones($conn, $busqueda);
+if ($codLocal) {
+  $result_promociones = getPromocionesPorLocal($conn, $codLocal);
 } else {
-    $result_promociones = getPromocionesPorNivel($conn, $categoria);
+  $result_promociones = filtrarPromociones($conn, $busqueda, $rubroSeleccionado, $categoria);
 }
 
 $promociones = [];
 if ($result_promociones instanceof mysqli_result) {
-    while ($row = $result_promociones->fetch_assoc()) {
-        $promociones[] = $row;
-    }
-    $result_promociones->free();
+  while ($row = $result_promociones->fetch_assoc()) {
+    $promociones[] = $row;
+  }
+  $result_promociones->free();
 } elseif (is_array($result_promociones)) {
-    $promociones = $result_promociones;
+  $promociones = $result_promociones;
 }
 ?>
 <!DOCTYPE html>
@@ -53,54 +51,100 @@ if ($result_promociones instanceof mysqli_result) {
 
     <h2 class="text-center mb-4 fs-1 fw-bold">Todas las Promociones</h2>
 
-    <form class="row g-3 mb-5 justify-content-center" method="GET" action="promociones.php">
-      <div class="col-12 col-md-5">
-        <input type="text" class="form-control" name="buscar" placeholder="Buscar por local, rubro o Promocion" value="<?= htmlspecialchars($busqueda) ?>">
+    <div class="card shadow-sm mb-5 border-0 bg-light">
+      <div class="card-body p-4">
+        <form class="row g-3 justify-content-center align-items-end" method="GET" action="promociones.php">
+
+          <div class="col-12 col-md-5">
+            <label for="buscar" class="form-label fw-semibold">Buscar</label>
+            <div class="input-group">
+              <span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span>
+              <input type="text" class="form-control border-start-0" id="buscar" name="buscar"
+                placeholder="Nombre del local o promoción..."
+                value="<?= htmlspecialchars($busqueda) ?>">
+            </div>
+          </div>
+
+          <div class="col-12 col-md-4">
+            <label for="rubro" class="form-label fw-semibold">Filtrar por Rubro</label>
+            <select class="form-select" name="rubro" id="rubro">
+              <option value="">Todos los rubros</option>
+              <?php foreach ($rubrosDisponibles as $r): ?>
+                <option value="<?= htmlspecialchars($r) ?>" <?= ($rubroSeleccionado === $r) ? 'selected' : '' ?>>
+                  <?= ucfirst(htmlspecialchars($r)) ?>
+                </option>
+              <?php endforeach; ?>
+            </select>
+          </div>
+
+          <div class="col-12 col-md-3 d-flex gap-2">
+            <button type="submit" class="btn btn-warning w-100 fw-bold">
+              <i class="fas fa-filter me-1"></i> Filtrar
+            </button>
+            <?php if ($hasFilters): ?>
+              <a href="promociones.php" class="btn btn-outline-secondary w-auto" title="Limpiar filtros">
+                <i class="fas fa-times"></i>
+              </a>
+            <?php endif; ?>
+          </div>
+        </form>
       </div>
-      <div class="col-12 col-md-auto d-flex align-items-center gap-2">
-        <button type="submit" class="btn btn-warning">Buscar</button>
-        <?php if ($hasFilters): ?>
-          <a href="promociones.php" class="btn btn-outline-secondary">Limpiar</a>
-        <?php endif; ?>
-      </div>
-    </form>
+    </div>
 
     <?php if (!empty($promociones)): ?>
       <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         <?php foreach ($promociones as $promo): ?>
           <div class="col">
-            <div class="card h-100 shadow-sm">
-              <img src="<?= htmlspecialchars($promo['imagenUrl']) ?>" alt="Promocion en <?= htmlspecialchars($promo['nombreLocal']) ?>" class="card-img-top" loading="lazy">
-              <div class="card-body">
-                <h5 class="card-title"><?= htmlspecialchars($promo['textoPromo']) ?></h5>
-                <p class="card-text">Promocion valida en <?= htmlspecialchars($promo['nombreLocal']) ?></p>
-                <?php if (!empty($promo['diasSemana'])): ?>
+            <div class="card h-100 shadow-sm border-0">
+              <div class="position-absolute top-0 end-0 m-2">
+                <span class="badge bg-warning text-dark shadow-sm">
+                  <?= htmlspecialchars($promo['rubroLocal'] ?? 'General') ?>
+                </span>
+              </div>
+
+              <img src="<?= htmlspecialchars($promo['imagenUrl']) ?>" alt="Promoción en <?= htmlspecialchars($promo['nombreLocal']) ?>" class="card-img-top" loading="lazy">
+
+              <div class="card-body d-flex flex-column">
+                <h5 class="card-title text-primary fw-bold"><?= htmlspecialchars($promo['textoPromo']) ?></h5>
+                <p class="card-text text-muted mb-1">
+                  <i class="fas fa-store me-1"></i> <?= htmlspecialchars($promo['nombreLocal']) ?>
+                </p>
+
+                <?php if (!empty($promo['diasSemana'])):
+                  $dias = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+                  $diaNombre = $dias[$promo['diasSemana']] ?? 'Día específico';
+                ?>
                   <p class="card-text small text-muted mb-1">
-                    <i class="fas fa-calendar-day me-1"></i><?= htmlspecialchars($promo['diasSemana']) ?>
+                    <i class="fas fa-calendar-day me-1"></i>Válido los <?= $diaNombre ?>
                   </p>
                 <?php endif; ?>
-                <p class="card-text">
+
+                <p class="card-text mb-3">
                   <small class="text-muted">Vigente hasta <?= date('d/m/Y', strtotime($promo['fechaHastaPromo'])) ?></small>
                 </p>
-                <?php if (isset($_SESSION['tipoUsuario']) && $_SESSION['tipoUsuario'] === 'cliente'): ?>
-                  <form method="POST" action="<?= SRC_URL ?>promociones/solicitar.php">
-                    <input type="hidden" name="codPromo" value="<?= $promo['codPromo'] ?>">
-                    <button type="submit" class="btn btn-sm btn-warning">Solicitar Promocion</button>
-                  </form>
-                <?php else: ?>
-                  <a href="autenticacion/login.php" class="btn btn-sm btn-warning">Inicia sesion como cliente para solicitar</a>
-                <?php endif; ?>
+
+                <div class="mt-auto">
+                  <?php if (isset($_SESSION['tipoUsuario']) && $_SESSION['tipoUsuario'] === 'cliente'): ?>
+                    <form method="POST" action="<?= SRC_URL ?>promociones/solicitar.php">
+                      <input type="hidden" name="codPromo" value="<?= $promo['codPromo'] ?>">
+                      <button type="submit" class="btn btn-warning w-100 fw-bold">Solicitar Promoción</button>
+                    </form>
+                  <?php else: ?>
+                    <a href="autenticacion/login.php" class="btn btn-outline-warning w-100">Inicia sesión para solicitar</a>
+                  <?php endif; ?>
+                </div>
               </div>
             </div>
           </div>
         <?php endforeach; ?>
       </div>
     <?php else: ?>
-      <div class="alert alert-info text-center" role="alert">
+      <div class="alert alert-info text-center py-5" role="alert">
+        <i class="fas fa-search fa-3x mb-3 text-info"></i>
+        <h4>No encontramos resultados</h4>
+        <p>Intenta cambiar los filtros de búsqueda o el rubro seleccionado.</p>
         <?php if ($hasFilters): ?>
-          No encontramos promociones que coincidan con tu busqueda. Proba con otros terminos o limpia los filtros.
-        <?php else: ?>
-          No hay promociones disponibles por el momento.
+          <a href="promociones.php" class="btn btn-primary mt-2">Ver todas las promociones</a>
         <?php endif; ?>
       </div>
     <?php endif; ?>

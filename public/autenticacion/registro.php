@@ -10,6 +10,23 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .password-toggle {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #6c757d;
+    }
+    .password-toggle:hover {
+      color: #495057;
+    }
+    .position-relative {
+      position: relative;
+    }
+  </style>
 </head>
 
 <body>
@@ -29,7 +46,18 @@
             </div>
             <div class="mb-3">
               <label for="password" class="form-label fw-semibold">Contrasena</label>
-              <input type="password" name="password" id="password" class="form-control" required>
+              <div class="position-relative">
+                <input type="password" name="password" id="password" class="form-control" required minlength="6">
+                <i class="fas fa-eye password-toggle" id="togglePassword"></i>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="confirmPassword" class="form-label fw-semibold">Repetir contrasena</label>
+              <div class="position-relative">
+                <input type="password" name="confirmPassword" id="confirmPassword" class="form-control" required minlength="6">
+                <i class="fas fa-eye password-toggle" id="toggleConfirmPassword"></i>
+              </div>
+              <div id="passwordError" class="text-danger small mt-1" style="display: none;">Las contraseñas no coinciden</div>
             </div>
             <div class="mb-5">
               <label for="tipoUsuario" class="form-label fw-semibold">Tipo de usuario</label>
@@ -51,6 +79,51 @@
   <?php include_once __DIR__ . '../../../includes/footer.php'; ?>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  <script>
+    // Toggle password visibility
+    const togglePassword = document.querySelector('#togglePassword');
+    const password = document.querySelector('#password');
+    const toggleConfirmPassword = document.querySelector('#toggleConfirmPassword');
+    const confirmPassword = document.querySelector('#confirmPassword');
+    const passwordError = document.querySelector('#passwordError');
+    const form = document.querySelector('form');
+
+    togglePassword.addEventListener('click', function() {
+      const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+      password.setAttribute('type', type);
+      this.classList.toggle('fa-eye');
+      this.classList.toggle('fa-eye-slash');
+    });
+
+    toggleConfirmPassword.addEventListener('click', function() {
+      const type = confirmPassword.getAttribute('type') === 'password' ? 'text' : 'password';
+      confirmPassword.setAttribute('type', type);
+      this.classList.toggle('fa-eye');
+      this.classList.toggle('fa-eye-slash');
+    });
+
+    // Validate passwords match
+    function validatePasswords() {
+      if (password.value !== confirmPassword.value) {
+        passwordError.style.display = 'block';
+        confirmPassword.setCustomValidity('Las contraseñas no coinciden');
+        return false;
+      } else {
+        passwordError.style.display = 'none';
+        confirmPassword.setCustomValidity('');
+        return true;
+      }
+    }
+
+    confirmPassword.addEventListener('input', validatePasswords);
+    password.addEventListener('input', validatePasswords);
+
+    form.addEventListener('submit', function(e) {
+      if (!validatePasswords()) {
+        e.preventDefault();
+      }
+    });
+  </script>
 </body>
 
 </html>

@@ -9,12 +9,19 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 $email = trim($_POST['email'] ?? '');
 $password = $_POST['password'] ?? '';
+$confirmPassword = $_POST['confirmPassword'] ?? '';
 $tipoUsuario = $_POST['tipoUsuario'] ?? '';
 
 $tiposPermitidos = ['cliente', 'dueno de local'];
 
-if ($email === '' || $password === '' || !in_array($tipoUsuario, $tiposPermitidos, true)) {
+if ($email === '' || $password === '' || $confirmPassword === '' || !in_array($tipoUsuario, $tiposPermitidos, true)) {
     setFlashMessage('danger', 'Datos incompletos o tipo de usuario invalido.');
+    header('Location: ../../public/autenticacion/registro.php');
+    exit();
+}
+
+if ($password !== $confirmPassword) {
+    setFlashMessage('danger', 'Las contraseñas no coinciden.');
     header('Location: ../../public/autenticacion/registro.php');
     exit();
 }
