@@ -53,12 +53,12 @@ $error = isset($_GET['error']) ? urldecode($_GET['error']) : null;
                 <form method="post" action="<?= SRC_URL ?>novedades/create.php">
                   <div class="mb-4">
                     <label for="texto_novedad" class="form-label fw-semibold">
-                      <i class="fas fa-pen me-1"></i>Texto de la Novedad
+                      <i class="fas fa-pen me-1"></i>Texto de la Novedad <span class="text-danger">*</span>
                     </label>
                     <textarea class="form-control form-control-lg"
                       id="texto_novedad" name="texto_novedad" required
                       placeholder="Ingrese el texto de la novedad..."
-                      maxlength="200" rows="4"><?= isset($_POST['texto_novedad']) ? htmlspecialchars($_POST['texto_novedad']) : '' ?></textarea>
+                      maxlength="200" minlength="5" pattern="^[^<>]{5,200}$" title="Entre 5 y 200 caracteres. No se permiten < ni >" rows="4"><?= isset($_POST['texto_novedad']) ? htmlspecialchars($_POST['texto_novedad']) : '' ?></textarea>
                     <div class="form-text d-flex justify-content-between">
                       <span><i class="fas fa-info-circle me-1"></i>Máximo 200 caracteres</span>
                       <span id="charCount">0/200</span>
@@ -68,7 +68,7 @@ $error = isset($_GET['error']) ? urldecode($_GET['error']) : null;
                   <div class="row">
                     <div class="col-md-6 mb-4">
                       <label for="fecha_desde" class="form-label fw-semibold">
-                        <i class="fas fa-calendar-alt me-1"></i>Fecha Desde
+                        <i class="fas fa-calendar-alt me-1"></i>Fecha Desde <span class="text-danger">*</span>
                       </label>
                       <input type="date" class="form-control form-control-lg"
                         id="fecha_desde" name="fecha_desde" required
@@ -81,7 +81,7 @@ $error = isset($_GET['error']) ? urldecode($_GET['error']) : null;
 
                     <div class="col-md-6 mb-4">
                       <label for="fecha_hasta" class="form-label fw-semibold">
-                        <i class="fas fa-calendar-check me-1"></i>Fecha Hasta
+                        <i class="fas fa-calendar-check me-1"></i>Fecha Hasta <span class="text-danger">*</span>
                       </label>
                       <input type="date" class="form-control form-control-lg"
                         id="fecha_hasta" name="fecha_hasta" required
@@ -95,7 +95,7 @@ $error = isset($_GET['error']) ? urldecode($_GET['error']) : null;
 
                   <div class="mb-4">
                     <label for="tipo_usuario" class="form-label fw-semibold">
-                      <i class="fas fa-users me-1"></i>Tipo de Usuario
+                      <i class="fas fa-users me-1"></i>Tipo de Usuario <span class="text-danger">*</span>
                     </label>
                     <select class="form-select form-select-lg" id="tipo_usuario" name="tipo_usuario" required>
                       <option value="">Seleccione el tipo de usuario</option>

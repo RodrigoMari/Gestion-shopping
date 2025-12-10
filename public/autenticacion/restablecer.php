@@ -28,11 +28,11 @@ $token = isset($_GET['token']) ? $_GET['token'] : '';
             <form action="../../src/usuarios/realizar_reset.php" method="POST">
               <input type="hidden" name="token" value="<?php echo htmlspecialchars($token); ?>">
               <div class="mb-3">
-                <label for="password" class="form-label fw-semibold">Nueva contraseña</label>
+                <label for="password" class="form-label fw-semibold">Nueva contraseña <span class="text-danger">*</span></label>
                 <input type="password" class="form-control" id="password" name="password" minlength="8" required>
               </div>
               <div class="mb-3">
-                <label for="password2" class="form-label fw-semibold">Confirmar contraseña</label>
+                <label for="password2" class="form-label fw-semibold">Confirmar contraseña <span class="text-danger">*</span></label>
                 <input type="password" class="form-control" id="password2" name="password2" minlength="8" required>
               </div>
               <div class="d-grid">

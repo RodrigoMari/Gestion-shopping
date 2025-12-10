@@ -28,7 +28,7 @@
           <p class="text-muted">Ingresa tu correo electrónico y te daremos un enlace para restablecer tu contraseña.</p>
           <form action="../../src/usuarios/solicitar_reset.php" method="POST">
             <div class="mb-3">
-              <label for="email" class="form-label fw-semibold">Correo electrónico</label>
+              <label for="email" class="form-label fw-semibold">Correo electrónico <span class="text-danger">*</span></label>
               <input type="email" class="form-control" id="email" name="email" required>
             </div>
             <div class="d-grid">
