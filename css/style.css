@@ -209,3 +209,7 @@ footer a {
   width: 20px;
   text-align: center;
 }
+
+a.btn:visited {
+  color: inherit !important;
+}
