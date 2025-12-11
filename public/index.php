@@ -33,7 +33,7 @@ $result_promociones = getPromocionesDestacadas($conn);
 
         <div class="mt-3">
             <a href="#promociones" class="btn btn-warning btn-lg me-2">Ver Promociones</a>
-            <a href="registro.php" class="btn btn-light btn-lg">Registrarse</a>
+            <a href="<?= PUBLIC_URL ?>autenticacion/registro.php" class="btn btn-light btn-lg">Registrarse</a>
         </div>
     </section>
 
