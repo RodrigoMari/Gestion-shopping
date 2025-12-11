@@ -37,16 +37,21 @@ function modificarLocal($conn, $id_local, $nombre_local, $ubicacion, $rubro, $id
     }
 }
 
-function getAllLocales($conn)
+function getAllLocales($conn, $limit = 10, $offset = 0)
 {
-    $sql = "SELECT * FROM locales ORDER BY nombreLocal ASC";
-    $result = $conn->query($sql);
+    $sql = "SELECT * FROM locales ORDER BY nombreLocal ASC LIMIT ? OFFSET ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ii", $limit, $offset);
+    $stmt->execute();
+    return $stmt->get_result();
+}
 
-    if ($result) {
-        return $result;
-    } else {
-        return "Error: " . $conn->error;
-    }
+function contarTodosLocales($conn)
+{
+    $sql = "SELECT COUNT(*) as total FROM locales";
+    $result = $conn->query($sql);
+    $row = $result->fetch_assoc();
+    return $row['total'];
 }
 
 function getAllRubros($conn)

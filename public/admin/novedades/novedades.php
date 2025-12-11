@@ -2,7 +2,14 @@
 require_once __DIR__ . '../../../../config/database.php';
 require_once __DIR__ . '/../../../src/novedades/model.php';
 
-$novedades = getAllNovedades($conn);
+$pagina = isset($_GET['pagina']) ? max(1, (int)$_GET['pagina']) : 1;
+$porPagina = 10;
+$offset = ($pagina - 1) * $porPagina;
+
+$novedades = getAllNovedades($conn, $porPagina, $offset);
+$totalRegistros = contarTodasNovedades($conn);
+$totalPaginas = ceil($totalRegistros / $porPagina);
+
 $novedadesVigentes = obtenerNovedadesVigentes($conn);
 ?>
 <!DOCTYPE html>
@@ -151,6 +158,30 @@ $novedadesVigentes = obtenerNovedadesVigentes($conn);
                   </tbody>
                 </table>
               </div>
+              <?php if ($totalPaginas > 1): ?>
+                <nav aria-label="Navegación de páginas" class="mt-4">
+                  <ul class="pagination justify-content-center">
+                    <li class="page-item <?= ($pagina <= 1) ? 'disabled' : '' ?>">
+                      <a class="page-link" href="?pagina=<?= $pagina - 1 ?>" aria-label="Anterior">
+                        <span aria-hidden="true">&laquo;</span>
+                      </a>
+                    </li>
+                    <?php for ($i = 1; $i <= $totalPaginas; $i++): ?>
+                      <li class="page-item <?= ($pagina == $i) ? 'active' : '' ?>">
+                        <a class="page-link" href="?pagina=<?= $i ?>"><?= $i ?></a>
+                      </li>
+                    <?php endfor; ?>
+                    <li class="page-item <?= ($pagina >= $totalPaginas) ? 'disabled' : '' ?>">
+                      <a class="page-link" href="?pagina=<?= $pagina + 1 ?>" aria-label="Siguiente">
+                        <span aria-hidden="true">&raquo;</span>
+                      </a>
+                    </li>
+                  </ul>
+                </nav>
+                <p class="text-center text-muted small mt-2">
+                  Mostrando <?= $novedades->num_rows ?> de <?= $totalRegistros ?> novedades
+                </p>
+              <?php endif; ?>
             <?php else: ?>
               <div class="text-center py-5">
                 <i class="fas fa-store fa-3x text-muted mb-3"></i>

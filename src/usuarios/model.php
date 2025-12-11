@@ -140,16 +140,21 @@ function getAllUsuarios($conn)
     }
 }
 
-function getAllDuenos($conn)
+function getAllDuenos($conn, $limit = 10, $offset = 0)
 {
-    $sql = "SELECT * FROM usuarios WHERE tipoUsuario = 'dueno de local' ORDER BY codUsuario ASC";
-    $result = $conn->query($sql);
+    $sql = "SELECT * FROM usuarios WHERE tipoUsuario = 'dueno de local' ORDER BY codUsuario ASC LIMIT ? OFFSET ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ii", $limit, $offset);
+    $stmt->execute();
+    return $stmt->get_result();
+}
 
-    if ($result) {
-        return $result;
-    } else {
-        return "Error: " . $conn->error;
-    }
+function contarTodosDuenos($conn)
+{
+    $sql = "SELECT COUNT(*) as total FROM usuarios WHERE tipoUsuario = 'dueno de local'";
+    $result = $conn->query($sql);
+    $row = $result->fetch_assoc();
+    return $row['total'];
 }
 
 function actualizarCategoriaCliente($conn, $codCliente)

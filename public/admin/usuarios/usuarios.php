@@ -2,7 +2,13 @@
 require_once __DIR__ . '../../../../config/database.php';
 require_once __DIR__ . '/../../../src/usuarios/model.php';
 
-$duenosPendientes = getAllDuenos($conn);
+$pagina = isset($_GET['pagina']) ? max(1, (int)$_GET['pagina']) : 1;
+$porPagina = 10;
+$offset = ($pagina - 1) * $porPagina;
+
+$duenosPendientes = getAllDuenos($conn, $porPagina, $offset);
+$totalRegistros = contarTodosDuenos($conn);
+$totalPaginas = ceil($totalRegistros / $porPagina);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -29,7 +35,7 @@ $duenosPendientes = getAllDuenos($conn);
         <!-- Breadcrumb -->
         <nav aria-label="breadcrumb" class="mb-4">
           <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="<?= PUBLIC_URL ?>admin/dashboard.php" class="text-decoration-none">Admin</a></li>
+            <li class="breadcrumb-item"><a href="<?= PUBLIC_URL ?>admin/dashboard.php" class="text-decoration-none">Admin</a></li>
             <li class="breadcrumb-item active" aria-current="page">Dueños Locales</li>
           </ol>
         </nav>
@@ -112,6 +118,30 @@ $duenosPendientes = getAllDuenos($conn);
                   </tbody>
                 </table>
               </div>
+              <?php if ($totalPaginas > 1): ?>
+                <nav aria-label="Navegación de páginas" class="mt-4">
+                  <ul class="pagination justify-content-center">
+                    <li class="page-item <?= ($pagina <= 1) ? 'disabled' : '' ?>">
+                      <a class="page-link" href="?pagina=<?= $pagina - 1 ?>" aria-label="Anterior">
+                        <span aria-hidden="true">&laquo;</span>
+                      </a>
+                    </li>
+                    <?php for ($i = 1; $i <= $totalPaginas; $i++): ?>
+                      <li class="page-item <?= ($pagina == $i) ? 'active' : '' ?>">
+                        <a class="page-link" href="?pagina=<?= $i ?>"><?= $i ?></a>
+                      </li>
+                    <?php endfor; ?>
+                    <li class="page-item <?= ($pagina >= $totalPaginas) ? 'disabled' : '' ?>">
+                      <a class="page-link" href="?pagina=<?= $pagina + 1 ?>" aria-label="Siguiente">
+                        <span aria-hidden="true">&raquo;</span>
+                      </a>
+                    </li>
+                  </ul>
+                </nav>
+                <p class="text-center text-muted small mt-2">
+                  Mostrando <?= $duenosPendientes->num_rows ?> de <?= $totalRegistros ?> dueños
+                </p>
+              <?php endif; ?>
             <?php else: ?>
               <div class="text-center py-5">
                 <i class="fas fa-user-clock fa-3x text-muted mb-3"></i>

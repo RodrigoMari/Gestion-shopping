@@ -3,7 +3,14 @@ require_once __DIR__ . '../../../../config/database.php';
 require_once __DIR__ . '/../../../src/locales/model.php';
 require_once __DIR__ . '/../../../src/usuarios/model.php';
 
-$locales = getAllLocales($conn);
+$pagina = isset($_GET['pagina']) ? max(1, (int)$_GET['pagina']) : 1;
+$porPagina = 10;
+$offset = ($pagina - 1) * $porPagina;
+
+$locales = getAllLocales($conn, $porPagina, $offset);
+$totalRegistros = contarTodosLocales($conn);
+$totalPaginas = ceil($totalRegistros / $porPagina);
+
 $propietariosCount = getLocalesPropietariosCount($conn);
 $rubrosCount = getLocalesRubrosCount($conn);
 
@@ -28,8 +35,8 @@ $rubrosCount = getLocalesRubrosCount($conn);
     <?php include '../../../includes/flash_toast.php'; ?>
     <?php include '../../../includes/sidebar.php'; ?>
     <div class="flex-grow-1">
-    <?php include '../../../includes/admin_header.php'; ?>
-    <main class="container my-5 px-4">
+      <?php include '../../../includes/admin_header.php'; ?>
+      <main class="container my-5 px-4">
         <!-- Breadcrumb -->
         <nav aria-label="breadcrumb" class="mb-4">
           <ol class="breadcrumb">
@@ -120,9 +127,9 @@ $rubrosCount = getLocalesRubrosCount($conn);
                     </tr>
                   </thead>
                   <tbody>
-                    <?php while ($local = $locales->fetch_assoc()): 
+                    <?php while ($local = $locales->fetch_assoc()):
                       $dueno = getUserById($conn, $local['codUsuario']);
-                      ?>
+                    ?>
                       <tr>
                         <td class="fw-semibold text-primary">#<?= $local['codLocal'] ?></td>
                         <td>
@@ -161,6 +168,30 @@ $rubrosCount = getLocalesRubrosCount($conn);
                   </tbody>
                 </table>
               </div>
+              <?php if ($totalPaginas > 1): ?>
+                <nav aria-label="Navegación de páginas" class="mt-4">
+                  <ul class="pagination justify-content-center">
+                    <li class="page-item <?= ($pagina <= 1) ? 'disabled' : '' ?>">
+                      <a class="page-link" href="?pagina=<?= $pagina - 1 ?>" aria-label="Anterior">
+                        <span aria-hidden="true">&laquo;</span>
+                      </a>
+                    </li>
+                    <?php for ($i = 1; $i <= $totalPaginas; $i++): ?>
+                      <li class="page-item <?= ($pagina == $i) ? 'active' : '' ?>">
+                        <a class="page-link" href="?pagina=<?= $i ?>"><?= $i ?></a>
+                      </li>
+                    <?php endfor; ?>
+                    <li class="page-item <?= ($pagina >= $totalPaginas) ? 'disabled' : '' ?>">
+                      <a class="page-link" href="?pagina=<?= $pagina + 1 ?>" aria-label="Siguiente">
+                        <span aria-hidden="true">&raquo;</span>
+                      </a>
+                    </li>
+                  </ul>
+                </nav>
+                <p class="text-center text-muted small mt-2">
+                  Mostrando <?= $locales->num_rows ?> de <?= $totalRegistros ?> locales
+                </p>
+              <?php endif; ?>
             <?php else: ?>
               <div class="text-center py-5">
                 <i class="fas fa-store fa-3x text-muted mb-3"></i>

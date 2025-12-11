@@ -14,13 +14,26 @@ function borrarPromocion($conn, $id_promocion)
     }
 }
 
-function getAllPromociones($conn)
+function getAllPromociones($conn, $limit = 10, $offset = 0)
 {
     $sql = "SELECT p.*, l.nombreLocal 
             FROM promociones p
             JOIN locales l ON p.codLocal = l.codLocal
-            ORDER BY p.fechaDesdePromo DESC";
-    return $conn->query($sql);
+            ORDER BY p.fechaDesdePromo DESC
+            LIMIT ? OFFSET ?";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ii", $limit, $offset);
+    $stmt->execute();
+    return $stmt->get_result();
+}
+
+function contarTodasPromociones($conn)
+{
+    $sql = "SELECT COUNT(*) as total FROM promociones";
+    $result = $conn->query($sql);
+    $row = $result->fetch_assoc();
+    return $row['total'];
 }
 
 function getPromocionesPendientes($conn)
@@ -136,17 +149,31 @@ function getPromocionesDestacadas($conn)
     return $conn->query($sql);
 }
 
-function getPromocionesPorLocal($conn, $codLocal)
+function getPromocionesPorLocal($conn, $codLocal, $limit = 12, $offset = 0)
 {
     $sql = "SELECT p.*, l.nombreLocal,
                    CONCAT('https://placehold.co/600x400?text=', l.nombreLocal) AS imagenUrl
             FROM promociones p
             JOIN locales l ON p.codLocal = l.codLocal
+            WHERE p.codLocal = ? AND p.estadoPromo = 'aprobada'
+            LIMIT ? OFFSET ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("iii", $codLocal, $limit, $offset);
+    $stmt->execute();
+    return $stmt->get_result();
+}
+
+function contarPromocionesPorLocal($conn, $codLocal)
+{
+    $sql = "SELECT COUNT(*) as total
+            FROM promociones p
             WHERE p.codLocal = ? AND p.estadoPromo = 'aprobada'";
+
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $codLocal);
     $stmt->execute();
-    return $stmt->get_result();
+    $row = $stmt->get_result()->fetch_assoc();
+    return $row['total'];
 }
 
 function buscarPromociones($conn, $termino)
@@ -180,7 +207,7 @@ function getPromoById($conn, $codPromo)
     return $stmt->get_result()->fetch_assoc();
 }
 
-function filtrarPromociones($conn, $texto = '', $rubro = '', $categoriaCliente = null)
+function filtrarPromociones($conn, $texto = '', $rubro = '', $categoriaCliente = null, $limit = 12, $offset = 0)
 {
     $sql = "SELECT p.*, l.nombreLocal, l.rubroLocal,
                    CONCAT('https://placehold.co/600x400?text=', l.nombreLocal) AS imagenUrl
@@ -227,13 +254,72 @@ function filtrarPromociones($conn, $texto = '', $rubro = '', $categoriaCliente =
         }
     }
 
-    $sql .= " ORDER BY p.fechaDesdePromo DESC";
+    $sql .= " ORDER BY p.fechaDesdePromo DESC LIMIT ? OFFSET ?";
+    $types .= "ii";
+    $params[] = $limit;
+    $params[] = $offset;
+
     $stmt = $conn->prepare($sql);
     if (!empty($params)) {
         $stmt->bind_param($types, ...$params);
     }
     $stmt->execute();
     return $stmt->get_result();
+}
+
+function contarPromocionesFiltradas($conn, $texto = '', $rubro = '', $categoriaCliente = null)
+{
+    $sql = "SELECT COUNT(*) as total
+            FROM promociones p
+            JOIN locales l ON p.codLocal = l.codLocal
+            WHERE p.estadoPromo = 'aprobada'";
+
+    $params = [];
+    $types = "";
+
+    if (!empty($texto)) {
+        $texto = trim($texto);
+        $textoLike = '%' . $texto . '%';
+        $sql .= " AND (p.textoPromo LIKE ? OR l.nombreLocal LIKE ?)";
+        $types .= "ss";
+        $params[] = $textoLike;
+        $params[] = $textoLike;
+    }
+
+    if (!empty($rubro)) {
+        $sql .= " AND l.rubroLocal = ?";
+        $types .= "s";
+        $params[] = $rubro;
+    }
+
+    if ($categoriaCliente !== null) {
+        $niveles = [];
+        switch ($categoriaCliente) {
+            case 'Inicial':
+                $niveles = ['Inicial'];
+                break;
+            case 'Medium':
+                $niveles = ['Inicial', 'Medium'];
+                break;
+            case 'Premium':
+                $niveles = ['Inicial', 'Medium', 'Premium'];
+                break;
+        }
+        if (!empty($niveles)) {
+            $placeholders = implode(',', array_fill(0, count($niveles), '?'));
+            $sql .= " AND (p.categoriaCliente IN ($placeholders) OR p.categoriaCliente IS NULL)";
+            $types .= str_repeat('s', count($niveles));
+            foreach ($niveles as $nivel) $params[] = $nivel;
+        }
+    }
+
+    $stmt = $conn->prepare($sql);
+    if (!empty($params)) {
+        $stmt->bind_param($types, ...$params);
+    }
+    $stmt->execute();
+    $row = $stmt->get_result()->fetch_assoc();
+    return $row['total'];
 }
 
 function contarUsoPromocion($conn, $codPromo)

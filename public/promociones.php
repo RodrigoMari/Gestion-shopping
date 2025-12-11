@@ -5,6 +5,10 @@ require_once __DIR__ . '/../src/locales/model.php';
 
 $rubrosDisponibles = getAllRubros($conn);
 
+$pagina = isset($_GET['pagina']) ? max(1, (int)$_GET['pagina']) : 1;
+$porPagina = 12;
+$offset = ($pagina - 1) * $porPagina;
+
 $categoria = isset($_SESSION['categoriaCliente']) ? $_SESSION['categoriaCliente'] : null;
 $busqueda = isset($_GET['buscar']) ? trim($_GET['buscar']) : '';
 $rubroSeleccionado = isset($_GET['rubro']) ? $_GET['rubro'] : '';
@@ -13,19 +17,30 @@ $codLocal = isset($_GET['codLocal']) && $_GET['codLocal'] !== '' ? (int) $_GET['
 $hasFilters = ($busqueda !== '' || $rubroSeleccionado !== '' || $codLocal !== null);
 
 if ($codLocal) {
-  $result_promociones = getPromocionesPorLocal($conn, $codLocal);
+  $result_promociones = getPromocionesPorLocal($conn, $codLocal, $porPagina, $offset);
+  $totalRegistros = contarPromocionesPorLocal($conn, $codLocal);
 } else {
-  $result_promociones = filtrarPromociones($conn, $busqueda, $rubroSeleccionado, $categoria);
+  $result_promociones = filtrarPromociones($conn, $busqueda, $rubroSeleccionado, $categoria, $porPagina, $offset);
+  $totalRegistros = contarPromocionesFiltradas($conn, $busqueda, $rubroSeleccionado, $categoria);
 }
 
+$totalPaginas = ceil($totalRegistros / $porPagina);
 $promociones = [];
+
 if ($result_promociones instanceof mysqli_result) {
   while ($row = $result_promociones->fetch_assoc()) {
     $promociones[] = $row;
   }
   $result_promociones->free();
-} elseif (is_array($result_promociones)) {
-  $promociones = $result_promociones;
+}
+
+function getPaginationLink($page, $busqueda, $rubro, $codLocal)
+{
+  $params = ['pagina' => $page];
+  if ($busqueda) $params['buscar'] = $busqueda;
+  if ($rubro) $params['rubro'] = $rubro;
+  if ($codLocal) $params['codLocal'] = $codLocal;
+  return 'promociones.php?' . http_build_query($params);
 }
 ?>
 <!DOCTYPE html>
@@ -54,6 +69,8 @@ if ($result_promociones instanceof mysqli_result) {
     <div class="card shadow-sm mb-5 border-0 bg-light">
       <div class="card-body p-4">
         <form class="row g-3 justify-content-center align-items-end" method="GET" action="promociones.php">
+
+          <?php if ($codLocal): ?><input type="hidden" name="codLocal" value="<?= $codLocal ?>"><?php endif; ?>
 
           <div class="col-12 col-md-5">
             <label for="buscar" class="form-label fw-semibold">Buscar</label>
@@ -138,6 +155,33 @@ if ($result_promociones instanceof mysqli_result) {
           </div>
         <?php endforeach; ?>
       </div>
+      <?php if ($totalPaginas > 1): ?>
+        <nav aria-label="Navegación de páginas" class="mt-5">
+          <ul class="pagination justify-content-center">
+
+            <li class="page-item <?= ($pagina <= 1) ? 'disabled' : '' ?>">
+              <a class="page-link" href="<?= getPaginationLink($pagina - 1, $busqueda, $rubroSeleccionado, $codLocal) ?>" aria-label="Anterior">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+
+            <?php for ($i = 1; $i <= $totalPaginas; $i++): ?>
+              <li class="page-item <?= ($pagina == $i) ? 'active' : '' ?>">
+                <a class="page-link" href="<?= getPaginationLink($i, $busqueda, $rubroSeleccionado, $codLocal) ?>">
+                  <?= $i ?>
+                </a>
+              </li>
+            <?php endfor; ?>
+
+            <li class="page-item <?= ($pagina >= $totalPaginas) ? 'disabled' : '' ?>">
+              <a class="page-link" href="<?= getPaginationLink($pagina + 1, $busqueda, $rubroSeleccionado, $codLocal) ?>" aria-label="Siguiente">
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+
+          </ul>
+        </nav>
+      <?php endif; ?>
     <?php else: ?>
       <div class="alert alert-info text-center py-5" role="alert">
         <i class="fas fa-search fa-3x mb-3 text-info"></i>

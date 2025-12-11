@@ -51,16 +51,21 @@ function obtenerNovedadesVigentes($conn, $limite = 2)
     }
 }
 
-function getAllNovedades($conn)
+function getAllNovedades($conn, $limit = 10, $offset = 0)
 {
-    $sql = "SELECT * FROM novedades ORDER BY codNovedad ASC";
-    $result = $conn->query($sql);
+    $sql = "SELECT * FROM novedades ORDER BY codNovedad ASC LIMIT ? OFFSET ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ii", $limit, $offset);
+    $stmt->execute();
+    return $stmt->get_result();
+}
 
-    if ($result) {
-        return $result;
-    } else {
-        return "Error: " . $conn->error;
-    }
+function contarTodasNovedades($conn)
+{
+    $sql = "SELECT COUNT(*) as total FROM novedades";
+    $result = $conn->query($sql);
+    $row = $result->fetch_assoc();
+    return $row['total'];
 }
 
 function getNovedadById($conn, $id_novedad)
