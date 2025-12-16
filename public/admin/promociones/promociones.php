@@ -38,12 +38,12 @@ $diasSemanaMap = [
 </head>
 
 <body>
-  <div class="d-flex">
+  <div class="d-flex admin-layout">
     <?php include '../../../includes/flash_toast.php'; ?>
     <?php include '../../../includes/sidebar.php'; ?>
-    <div class="flex-grow-1">
+    <div class="flex-grow-1 admin-content">
       <?php include '../../../includes/admin_header.php'; ?>
-      <main class="container my-5 px-4">
+      <main class="container-fluid my-4 my-md-5 px-2 px-md-4">
         <!-- Breadcrumb -->
         <nav aria-label="breadcrumb" class="mb-4">
           <ol class="breadcrumb">
@@ -54,7 +54,7 @@ $diasSemanaMap = [
 
         <!-- Título y botón -->
         <div class="row mb-4">
-          <div class="col-md-8">
+          <div class="col-12 col-md-8">
             <h2 class="fw-bold text-dark">Administración de Promociones</h2>
             <p class="text-muted">Aprueba o deniega las promociones creadas por los dueños de locales.</p>
           </div>
@@ -190,7 +190,7 @@ $diasSemanaMap = [
                 <i class="fas fa-tags fa-3x text-muted mb-3"></i>
                 <h5 class="text-muted">No hay promociones cargadas</h5>
                 <p class="text-muted">Comienza creando tu primera promoción</p>
-                <a href="create.php" class="btn btn-warning">
+                <a href="create.php" class="btn btn-warning w-100 w-md-auto">
                   <i class="fas fa-plus me-2"></i>Crear Promoción
                 </a>
               </div>

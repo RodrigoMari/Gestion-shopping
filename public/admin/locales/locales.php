@@ -31,12 +31,12 @@ $rubrosCount = getLocalesRubrosCount($conn);
 </head>
 
 <body>
-  <div class="d-flex">
+  <div class="d-flex admin-layout">
     <?php include '../../../includes/flash_toast.php'; ?>
     <?php include '../../../includes/sidebar.php'; ?>
-    <div class="flex-grow-1">
+    <div class="flex-grow-1 admin-content">
       <?php include '../../../includes/admin_header.php'; ?>
-      <main class="container my-5 px-4">
+      <main class="container-fluid my-4 my-md-5 px-2 px-md-4">
         <!-- Breadcrumb -->
         <nav aria-label="breadcrumb" class="mb-4">
           <ol class="breadcrumb">
@@ -47,12 +47,12 @@ $rubrosCount = getLocalesRubrosCount($conn);
 
         <!-- Título y botón de acción -->
         <div class="row mb-4">
-          <div class="col-md-8">
+          <div class="col-12 col-md-8">
             <h2 class="fw-bold text-dark">Administración de Locales</h2>
             <p class="text-muted">Gestiona todos los locales del centro comercial</p>
           </div>
-          <div class="col-md-4 text-end">
-            <a href="create.php" class="btn btn-warning btn-lg">
+          <div class="col-12 col-md-4 text-start text-md-end mt-3 mt-md-0">
+            <a href="create.php" class="btn btn-warning btn-lg w-100 w-md-auto">
               <i class="fas fa-plus me-2"></i>Nuevo Local
             </a>
           </div>

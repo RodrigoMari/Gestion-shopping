@@ -26,12 +26,12 @@ $totalPaginas = ceil($totalRegistros / $porPagina);
 </head>
 
 <body>
-  <div class="d-flex">
+  <div class="d-flex admin-layout">
     <?php include '../../../includes/flash_toast.php'; ?>
     <?php include '../../../includes/sidebar.php'; ?>
-    <div class="flex-grow-1">
+    <div class="flex-grow-1 admin-content">
       <?php include '../../../includes/admin_header.php'; ?>
-      <main class="container my-5 px-4">
+      <main class="container-fluid my-4 my-md-5 px-2 px-md-4">
         <!-- Breadcrumb -->
         <nav aria-label="breadcrumb" class="mb-4">
           <ol class="breadcrumb">
@@ -42,7 +42,7 @@ $totalPaginas = ceil($totalRegistros / $porPagina);
 
         <!-- Título -->
         <div class="row mb-4">
-          <div class="col-md-8">
+          <div class="col-12 col-md-8">
             <h2 class="fw-bold text-dark">Administración de Dueños Locales</h2>
             <p class="text-muted">Aprueba o rechaza las cuentas de los dueños de locales registrados.</p>
           </div>
@@ -99,18 +99,20 @@ $totalPaginas = ceil($totalRegistros / $porPagina);
                         </td>
                         <td class="text-center">
                           <?php if ($row['estado'] == 'pendiente'): ?>
-                            <form method="POST" action="<?= SRC_URL ?>usuarios/aprobar_duenos.php" class="d-inline">
-                              <input type="hidden" name="id_usuario" value="<?= $row['codUsuario'] ?>">
-                              <button type="submit" name="accion" value="aprobar" class="btn btn-sm btn-success" title="Aprobar">
-                                <i class="fas fa-check"></i> Aprobar
-                              </button>
-                            </form>
-                            <form method="POST" action="<?= SRC_URL ?>usuarios/aprobar_duenos.php" class="d-inline">
-                              <input type="hidden" name="id_usuario" value="<?= $row['codUsuario'] ?>">
-                              <button type="submit" name="accion" value="rechazar" class="btn btn-sm btn-danger" title="Rechazar" onclick="return confirm('¿Seguro que quieres rechazar este usuario?')">
-                                <i class="fas fa-times"></i> Rechazar
-                              </button>
-                            </form>
+                            <div class="d-flex flex-column flex-md-row justify-content-center gap-2">
+                              <form method="POST" action="<?= SRC_URL ?>usuarios/aprobar_duenos.php" class="m-0">
+                                <input type="hidden" name="id_usuario" value="<?= $row['codUsuario'] ?>">
+                                <button type="submit" name="accion" value="aprobar" class="btn btn-sm btn-success" title="Aprobar">
+                                  <i class="fas fa-check"></i> Aprobar
+                                </button>
+                              </form>
+                              <form method="POST" action="<?= SRC_URL ?>usuarios/aprobar_duenos.php" class="m-0">
+                                <input type="hidden" name="id_usuario" value="<?= $row['codUsuario'] ?>">
+                                <button type="submit" name="accion" value="rechazar" class="btn btn-sm btn-danger" title="Rechazar" onclick="return confirm('¿Seguro que quieres rechazar este usuario?')">
+                                  <i class="fas fa-times"></i> Rechazar
+                                </button>
+                              </form>
+                            </div>
                           <?php endif; ?>
                         </td>
                       </tr>

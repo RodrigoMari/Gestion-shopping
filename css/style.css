@@ -252,3 +252,36 @@ footer a {
 .sidebar-link:visited {
   color: #d6c7ef;
 }
+
+@media (max-width: 767.98px) {
+  .sidebar.sidebar-mobile-open {
+    display: block !important;
+    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.3);
+  }
+}
+
+.admin-layout {
+  min-height: 100vh;
+}
+
+.admin-content {
+  min-width: 0;
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.admin-page-header {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 576px) {
+  .admin-page-header .btn,
+  .admin-page-header button.btn {
+    width: 100%;
+  }
+}
