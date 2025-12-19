@@ -7,13 +7,13 @@ $novedad = null;
 if (isset($_GET['id'])) {
   $id_novedad = (int)$_GET['id'];
   $novedad = getNovedadById($conn, $id_novedad);
-    if ($novedad === null) {
-        header("Location: edit.php?id=" . urlencode("Novedad no encontrada"));
-        exit();
-    }
-} else {
-    header("Location: edit.php?id=" . urlencode("ID de novedad no especificado"));
+  if ($novedad === null) {
+    header("Location: edit.php?id=" . urlencode("Novedad no encontrada"));
     exit();
+  }
+} else {
+  header("Location: edit.php?id=" . urlencode("ID de novedad no especificado"));
+  exit();
 }
 ?>
 <!DOCTYPE html>
@@ -165,6 +165,30 @@ if (isset($_GET['id'])) {
   <?php include '../../../includes/footer.php'; ?>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  <script>
+    // Validación de fechas
+    const fechaDesde = document.getElementById('fecha_desde');
+    const fechaHasta = document.getElementById('fecha_hasta');
+
+    function actualizarMinFechaHasta() {
+      if (fechaDesde.value) {
+        fechaHasta.min = fechaDesde.value;
+        if (fechaHasta.value && fechaHasta.value < fechaDesde.value) {
+          fechaHasta.value = fechaDesde.value;
+        }
+      }
+    }
+
+    fechaDesde.addEventListener('change', actualizarMinFechaHasta);
+    fechaHasta.addEventListener('change', function() {
+      if (this.value < fechaDesde.value) {
+        this.value = fechaDesde.value;
+        alert('La fecha hasta debe ser mayor o igual a la fecha desde.');
+      }
+    });
+
+    actualizarMinFechaHasta();
+  </script>
 </body>
 
 </html>

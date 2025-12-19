@@ -3,7 +3,7 @@
   --color-secundario: #f57c00;
   --accent-color: #e74c3c;
   --light-color: #ecf0f1;
-  --visited-color: #9e591d;
+  --visited-color: #003f37;
   /*--color-fondo: #f8f9fa;
   --color-texto: #212529; */
 }
@@ -29,6 +29,19 @@ a:focus {
   text-decoration-thickness: 2px;
 }
 
+a.btn-warning,
+a.btn-warning:link,
+a.btn-warning:visited {
+  color: #ffffff !important;
+  text-decoration: none;
+}
+
+a.btn-warning:hover,
+a.btn-warning:focus {
+  color: #ffffff !important;
+  opacity: 0.9;
+}
+
 /* Header */
 .custom-header {
   background: var(--color-principal);
@@ -49,6 +62,15 @@ a:focus {
 
 .navbar a:visited {
   color: #c8c2b5;
+}
+
+.dropdown-menu .dropdown-item:visited {
+  color: #212529;
+}
+
+.dropdown-menu .dropdown-item:hover {
+  color: #1e2125;
+  background-color: #e9ecef;
 }
 
 /* Sección Hero */
@@ -126,16 +148,6 @@ a:focus {
   transition: opacity 0.3s ease;
 }
 
-/* Asegurar diferenciación también en footer y sidebar */
-footer a:link {
-  color: var(--light-color);
-  text-decoration: underline;
-}
-
-footer a:visited {
-  color: #b3a1d6; /* contraste con link */
-}
-
 .contact-form .form-control {
   border: none;
   border-radius: 8px;
@@ -167,6 +179,15 @@ footer {
 
 footer a {
   text-decoration: none;
+}
+
+footer a:link {
+  color: var(--light-color);
+  text-decoration: underline;
+}
+
+footer a:visited {
+  color: #b3a1d6; /* contraste con link */
 }
 
 /* Admin Dashboard */

@@ -188,6 +188,28 @@ if (!empty($_GET)) {
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <script>
+    const fechaDesde = document.getElementById('fecha_desde');
+    const fechaHasta = document.getElementById('fecha_hasta');
+
+    function actualizarMinFechaHasta() {
+      if (fechaDesde.value) {
+        fechaHasta.min = fechaDesde.value;
+        if (fechaHasta.value && fechaHasta.value < fechaDesde.value) {
+          fechaHasta.value = fechaDesde.value;
+        }
+      }
+    }
+
+    fechaDesde.addEventListener('change', actualizarMinFechaHasta);
+    fechaHasta.addEventListener('change', function() {
+      if (this.value < fechaDesde.value) {
+        this.value = fechaDesde.value;
+        alert('La fecha hasta debe ser mayor o igual a la fecha desde.');
+      }
+    });
+
+    actualizarMinFechaHasta();
+
     document.addEventListener('DOMContentLoaded', function() {
       // Inicializar Select2 para clientes
       $('.select2-clientes').select2({

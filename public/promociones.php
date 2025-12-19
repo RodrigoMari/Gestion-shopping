@@ -14,6 +14,13 @@ $busqueda = isset($_GET['buscar']) ? trim($_GET['buscar']) : '';
 $rubroSeleccionado = isset($_GET['rubro']) ? $_GET['rubro'] : '';
 $codLocal = isset($_GET['codLocal']) && $_GET['codLocal'] !== '' ? (int) $_GET['codLocal'] : null;
 
+if (empty($busqueda) && $codLocal) {
+  $localData = getLocalById($conn, $codLocal);
+  if ($localData) {
+    $busqueda = $localData['nombreLocal'];
+  }
+}
+
 $hasFilters = ($busqueda !== '' || $rubroSeleccionado !== '' || $codLocal !== null);
 
 if ($codLocal) {
@@ -69,9 +76,6 @@ function getPaginationLink($page, $busqueda, $rubro, $codLocal)
     <div class="card shadow-sm mb-5 border-0 bg-light">
       <div class="card-body p-4">
         <form class="row g-3 justify-content-center align-items-end" method="GET" action="promociones.php">
-
-          <?php if ($codLocal): ?><input type="hidden" name="codLocal" value="<?= $codLocal ?>"><?php endif; ?>
-
           <div class="col-12 col-md-5">
             <label for="buscar" class="form-label fw-semibold">Buscar</label>
             <div class="input-group">
@@ -137,11 +141,19 @@ function getPaginationLink($page, $busqueda, $rubro, $codLocal)
                 <?php endif; ?>
 
                 <p class="card-text mb-3">
-                  <small class="text-muted">Vigente hasta <?= date('d/m/Y', strtotime($promo['fechaHastaPromo'])) ?></small>
+                  <?php if (!empty($promo['proximamente']) && $promo['proximamente'] == 1): ?>
+                    <small class="text-info fw-semibold"><i class="fas fa-clock me-1"></i>Disponible desde <?= date('d/m/Y', strtotime($promo['fechaDesdePromo'])) ?></small>
+                  <?php else: ?>
+                    <small class="text-muted">Vigente hasta <?= date('d/m/Y', strtotime($promo['fechaHastaPromo'])) ?></small>
+                  <?php endif; ?>
                 </p>
 
                 <div class="mt-auto">
-                  <?php if (isset($_SESSION['tipoUsuario']) && $_SESSION['tipoUsuario'] === 'cliente'): ?>
+                  <?php if (!empty($promo['proximamente']) && $promo['proximamente'] == 1): ?>
+                    <button type="button" class="btn btn-secondary w-100 fw-bold" disabled>
+                      <i class="fas fa-hourglass-start me-1"></i>Disponible próximamente
+                    </button>
+                  <?php elseif (isset($_SESSION['tipoUsuario']) && $_SESSION['tipoUsuario'] === 'cliente'): ?>
                     <form method="POST" action="<?= SRC_URL ?>promociones/solicitar.php">
                       <input type="hidden" name="codPromo" value="<?= $promo['codPromo'] ?>">
                       <button type="submit" class="btn btn-warning w-100 fw-bold">Solicitar Promoción</button>

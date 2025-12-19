@@ -9,6 +9,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $fecha_hasta = $_POST['fecha_hasta'];
     $tipo_usuario = $_POST['tipo_usuario'];
 
+    if ($fecha_hasta < $fecha_desde) {
+        setFlashMessage('danger', 'La fecha hasta debe ser mayor o igual a la fecha desde.');
+        header("Location: " . PUBLIC_URL . "admin/novedades/create.php");
+        exit();
+    }
+
     $resultado = crearNovedad($conn, $texto_novedad, $fecha_desde, $fecha_hasta, $tipo_usuario);
 
     if ($resultado === true) {
@@ -21,4 +27,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         header("Location: " . PUBLIC_URL . "admin/novedades/create.php");
     }
 }
-?>

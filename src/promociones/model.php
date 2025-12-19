@@ -152,10 +152,12 @@ function getPromocionesDestacadas($conn)
 function getPromocionesPorLocal($conn, $codLocal, $limit = 12, $offset = 0)
 {
     $sql = "SELECT p.*, l.nombreLocal,
-                   CONCAT('https://placehold.co/600x400?text=', l.nombreLocal) AS imagenUrl
+                   CONCAT('https://placehold.co/600x400?text=', l.nombreLocal) AS imagenUrl,
+                   CASE WHEN p.fechaDesdePromo > CURDATE() THEN 1 ELSE 0 END AS proximamente
             FROM promociones p
             JOIN locales l ON p.codLocal = l.codLocal
             WHERE p.codLocal = ? AND p.estadoPromo = 'aprobada'
+            ORDER BY proximamente ASC, p.fechaDesdePromo DESC
             LIMIT ? OFFSET ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("iii", $codLocal, $limit, $offset);
@@ -210,7 +212,8 @@ function getPromoById($conn, $codPromo)
 function filtrarPromociones($conn, $texto = '', $rubro = '', $categoriaCliente = null, $limit = 12, $offset = 0)
 {
     $sql = "SELECT p.*, l.nombreLocal, l.rubroLocal,
-                   CONCAT('https://placehold.co/600x400?text=', l.nombreLocal) AS imagenUrl
+                   CONCAT('https://placehold.co/600x400?text=', l.nombreLocal) AS imagenUrl,
+                   CASE WHEN p.fechaDesdePromo > CURDATE() THEN 1 ELSE 0 END AS proximamente
             FROM promociones p
             JOIN locales l ON p.codLocal = l.codLocal
             WHERE p.estadoPromo = 'aprobada'";
@@ -254,7 +257,7 @@ function filtrarPromociones($conn, $texto = '', $rubro = '', $categoriaCliente =
         }
     }
 
-    $sql .= " ORDER BY p.fechaDesdePromo DESC LIMIT ? OFFSET ?";
+    $sql .= " ORDER BY proximamente ASC, p.fechaDesdePromo DESC LIMIT ? OFFSET ?";
     $types .= "ii";
     $params[] = $limit;
     $params[] = $offset;
@@ -547,12 +550,11 @@ function getReporteUsoPromociones($conn, $filtros)
             JOIN usuarios u ON up.codCliente = u.codUsuario
             JOIN promociones p ON up.codPromo = p.codPromo
             JOIN locales l ON p.codLocal = l.codLocal
-            WHERE 1=1"; // Cláusula WHERE base
+            WHERE 1=1";
 
     $params = [];
     $types = "";
 
-    // Filtrar por clientes
     if (!empty($filtros['clientes']) && is_array($filtros['clientes'])) {
         $placeholders = implode(',', array_fill(0, count($filtros['clientes']), '?'));
         $sql .= " AND up.codCliente IN ($placeholders)";
@@ -560,32 +562,25 @@ function getReporteUsoPromociones($conn, $filtros)
         $params = array_merge($params, $filtros['clientes']);
     }
 
-    // --- INICIO DE MODIFICACIÓN ---
-    // Filtrar por locales (en lugar de promociones)
     if (!empty($filtros['locales']) && is_array($filtros['locales'])) {
         $placeholders = implode(',', array_fill(0, count($filtros['locales']), '?'));
-        // Filtramos por p.codLocal (de la tabla promociones)
         $sql .= " AND p.codLocal IN ($placeholders)";
         $types .= str_repeat('i', count($filtros['locales']));
         $params = array_merge($params, $filtros['locales']);
     }
-    // --- FIN DE MODIFICACIÓN ---
 
-    // Filtrar por estado
     if (!empty($filtros['estado'])) {
         $sql .= " AND up.estado = ?";
         $types .= "s";
         $params[] = $filtros['estado'];
     }
 
-    // Filtrar por fecha desde
     if (!empty($filtros['fecha_desde'])) {
         $sql .= " AND up.fechaUsoPromo >= ?";
         $types .= "s";
         $params[] = $filtros['fecha_desde'];
     }
 
-    // Filtrar por fecha hasta
     if (!empty($filtros['fecha_hasta'])) {
         $sql .= " AND up.fechaUsoPromo <= ?";
         $types .= "s";

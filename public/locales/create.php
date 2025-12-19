@@ -28,16 +28,20 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
   $categoria = $_POST['categoriaCliente'];
   $diaSemana = $_POST['diasSemana'];
 
-  $sql = "INSERT INTO promociones 
-            (textoPromo, fechaDesdePromo, fechaHastaPromo, categoriaCliente, diasSemana, estadoPromo, codLocal)
-            VALUES (?, ?, ?, ?, ?, 'pendiente', ?)";
-  $stmt = $conn->prepare($sql);
-  $stmt->bind_param("ssssii", $textoPromo, $fechaDesde, $fechaHasta, $categoria, $diaSemana, $codLocal);
-
-  if ($stmt->execute()) {
-    $mensaje = '<div class="alert alert-success mt-3">Promoción creada correctamente. Ahora debe ser aprobada por el administrador.</div>';
+  if ($fechaHasta < $fechaDesde) {
+    $mensaje = '<div class="alert alert-danger mt-3">Error: La fecha de finalización no puede ser anterior a la de inicio.</div>';
   } else {
-    $mensaje = '<div class="alert alert-danger mt-3">Error al crear la promoción: ' . $conn->error . '</div>';
+    $sql = "INSERT INTO promociones 
+              (textoPromo, fechaDesdePromo, fechaHastaPromo, categoriaCliente, diasSemana, estadoPromo, codLocal)
+              VALUES (?, ?, ?, ?, ?, 'pendiente', ?)";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ssssii", $textoPromo, $fechaDesde, $fechaHasta, $categoria, $diaSemana, $codLocal);
+
+    if ($stmt->execute()) {
+      $mensaje = '<div class="alert alert-success mt-3">Promoción creada correctamente. Ahora debe ser aprobada por el administrador.</div>';
+    } else {
+      $mensaje = '<div class="alert alert-danger mt-3">Error al crear la promoción: ' . $conn->error . '</div>';
+    }
   }
 }
 ?>
@@ -63,8 +67,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     <form method="POST" class="card shadow-sm p-4">
       <div class="mb-3">
-  <label for="textoPromo" class="form-label">Texto de la Promoción <span class="text-danger">*</span></label>
-  <input type="text" name="textoPromo" id="textoPromo" class="form-control" maxlength="200" minlength="5" required pattern="^[^<>]{5,200}$" title="Entre 5 y 200 caracteres. No se permiten < ni >">
+        <label for="textoPromo" class="form-label">Texto de la Promoción <span class="text-danger">*</span></label>
+        <input type="text" name="textoPromo" id="textoPromo" class="form-control" maxlength="200" minlength="5" required pattern="^[^<>]{5,200}$" title="Entre 5 y 200 caracteres. No se permiten < ni >">
       </div>
 
       <div class="row mb-3">
@@ -79,7 +83,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       </div>
 
       <div class="mb-3">
-  <label for="categoriaCliente" class="form-label">Categoría mínima de cliente <span class="text-danger">*</span></label>
+        <label for="categoriaCliente" class="form-label">Categoría mínima de cliente <span class="text-danger">*</span></label>
         <select name="categoriaCliente" id="categoriaCliente" class="form-select" required>
           <option value="Inicial">Inicial</option>
           <option value="Medium">Medium</option>
@@ -88,7 +92,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       </div>
 
       <div class="mb-3">
-  <label for="diasSemana" class="form-label">Día de la semana <span class="text-danger">*</span></label>
+        <label for="diasSemana" class="form-label">Día de la semana <span class="text-danger">*</span></label>
         <select name="diasSemana" id="diasSemana" class="form-select" required>
           <option value="0">Domingo</option>
           <option value="1">Lunes</option>
@@ -107,6 +111,36 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
   </main>
 
   <?php include '../../includes/footer.php'; ?>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const fechaDesde = document.getElementById('fechaDesdePromo');
+      const fechaHasta = document.getElementById('fechaHastaPromo');
+      const form = document.getElementById('formPromocion');
+
+      fechaDesde.addEventListener('change', function() {
+        if (this.value) {
+          fechaHasta.min = this.value;
+
+          if (fechaHasta.value && fechaHasta.value < this.value) {
+            fechaHasta.value = '';
+            alert('Se ha reseteado la fecha final porque no puede ser anterior a la de inicio.');
+          }
+        }
+      });
+
+      form.addEventListener('submit', function(e) {
+        if (fechaDesde.value && fechaHasta.value) {
+          if (fechaHasta.value < fechaDesde.value) {
+            e.preventDefault();
+            alert('Error: La fecha "Hasta" no puede ser anterior a la fecha "Desde".');
+            fechaHasta.focus();
+          }
+        }
+      });
+    });
+  </script>
 </body>
 
 </html>
