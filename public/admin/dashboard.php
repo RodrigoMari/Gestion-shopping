@@ -13,6 +13,7 @@ $promociones = contarTodasPromociones($conn);
 
 $duenosPendientes = getDuenosPendientes($conn);
 $promosPendientes = getPromocionesPendientes($conn);
+$accionesPendientes = $duenosPendientes->num_rows + $promosPendientes->num_rows;
 $ultimosLocales = $conn->query("SELECT * FROM locales ORDER BY codLocal DESC LIMIT 2");
 $ultimasPromos = $conn->query("SELECT p.textoPromo, l.nombreLocal, p.fechaDesdePromo
                               FROM promociones p
@@ -63,7 +64,7 @@ $ultimasNovedades = $conn->query("SELECT * FROM novedades ORDER BY codNovedad DE
                   <div class="d-flex justify-content-between align-items-center">
                     <div>
                       <h6 class="text-muted mb-2">Locales Activos</h6>
-                      <h3 class="mb-0"><?= $locales ?></h3>
+                      <h3 class="mb-0" tabindex="0" aria-label="Locales activos: <?= htmlspecialchars($locales) ?>"><?= $locales ?></h3>
                     </div>
                     <div class="card-icon bg-light rounded-circle p-3">
                       <i class="fas fa-store"></i>
@@ -79,7 +80,7 @@ $ultimasNovedades = $conn->query("SELECT * FROM novedades ORDER BY codNovedad DE
                   <div class="d-flex justify-content-between align-items-center">
                     <div>
                       <h6 class="text-muted mb-2">Promociones Activas</h6>
-                      <h3 class="mb-0"><?= $promociones ?></h3>
+                      <h3 class="mb-0" tabindex="0" aria-label="Promociones activas: <?= htmlspecialchars($promociones) ?>"><?= $promociones ?></h3>
                     </div>
                     <div class="card-icon bg-light rounded-circle p-3">
                       <i class="fas fa-tag"></i>
@@ -95,7 +96,7 @@ $ultimasNovedades = $conn->query("SELECT * FROM novedades ORDER BY codNovedad DE
                   <div class="d-flex justify-content-between align-items-center">
                     <div>
                       <h6 class="text-muted mb-2">Novedades</h6>
-                      <h3 class="mb-0"><?= $novedades ?></h3>
+                      <h3 class="mb-0" tabindex="0" aria-label="Novedades: <?= htmlspecialchars($novedades) ?>"><?= $novedades ?></h3>
                     </div>
                     <div class="card-icon bg-light rounded-circle p-3">
                       <i class="fas fa-newspaper"></i>
@@ -111,8 +112,8 @@ $ultimasNovedades = $conn->query("SELECT * FROM novedades ORDER BY codNovedad DE
                   <div class="d-flex justify-content-between align-items-center">
                     <div>
                       <h6 class="text-muted mb-2">Acciones Pendientes</h6>
-                      <h3 class="mb-0">
-                        <?= $duenosPendientes->num_rows + $promosPendientes->num_rows ?>
+                      <h3 class="mb-0" tabindex="0" aria-label="Acciones pendientes: <?= htmlspecialchars($accionesPendientes) ?>">
+                        <?= $accionesPendientes ?>
                       </h3>
                     </div>
                     <div class="card-icon bg-light rounded-circle p-3">

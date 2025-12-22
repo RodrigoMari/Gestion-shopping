@@ -12,6 +12,8 @@ $totalPaginas = ceil($totalRegistros / $porPagina);
 
 $promosActivasCount = getPromocionesActivasCount($conn);
 
+$promocionesCount = is_object($promociones) ? $promociones->num_rows : 0;
+
 $diasSemanaMap = [
   0 => 'Domingo',
   1 => 'Lunes',
@@ -66,16 +68,7 @@ $diasSemanaMap = [
             <div class="card text-center shadow-sm border-0">
               <div class="card-body">
                 <i class="fas fa-tags fa-2x text-info mb-2"></i>
-                <h4 class="fw-bold">
-                  <?php
-                  if (is_object($promociones)) {
-                    echo $promociones->num_rows;
-                    $promociones->data_seek(0);
-                  } else {
-                    echo '0';
-                  }
-                  ?>
-                </h4>
+                <h4 class="fw-bold" tabindex="0" aria-label="Promociones Totales: <?= htmlspecialchars($promocionesCount) ?>"><?= $promocionesCount ?></h4>
                 <p class="text-muted mb-0">Promociones Totales</p>
               </div>
             </div>
@@ -84,7 +77,7 @@ $diasSemanaMap = [
             <div class="card text-center shadow-sm border-0">
               <div class="card-body">
                 <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
-                <h4 class="fw-bold"><?= $promosActivasCount ?></h4>
+                <h4 class="fw-bold" tabindex="0" aria-label="Promociones vigentes: <?= htmlspecialchars($promosActivasCount) ?>"><?= $promosActivasCount ?></h4>
                 <p class="text-muted mb-0">Promociones Vigentes</p>
               </div>
             </div>

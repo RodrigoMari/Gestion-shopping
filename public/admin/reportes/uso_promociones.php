@@ -57,7 +57,7 @@ $conversion = $totalSolicitudes > 0 ? round(($aceptadas / $totalSolicitudes) * 1
                   <div class="d-flex justify-content-between align-items-center">
                     <div>
                       <h6 class="text-muted mb-2">Solicitudes registradas</h6>
-                      <h3 class="mb-0"><?= number_format($totalSolicitudes) ?></h3>
+                      <h3 class="mb-0" tabindex="0" aria-label="Solicitudes registradas: <?= htmlspecialchars(number_format($totalSolicitudes)) ?>"><?= number_format($totalSolicitudes) ?></h3>
                     </div>
                     <div class="card-icon bg-light rounded-circle p-3">
                       <i class="fas fa-receipt"></i>
@@ -73,7 +73,7 @@ $conversion = $totalSolicitudes > 0 ? round(($aceptadas / $totalSolicitudes) * 1
                   <div class="d-flex justify-content-between align-items-center">
                     <div>
                       <h6 class="text-muted mb-2">Promos efectivizadas</h6>
-                      <h3 class="mb-0"><?= number_format($aceptadas) ?></h3>
+                      <h3 class="mb-0" tabindex="0" aria-label="Promos efectivizadas: <?= htmlspecialchars(number_format($aceptadas)) ?>"><?= number_format($aceptadas) ?></h3>
                       <small class="text-success">Tasa de conversion <?= $conversion ?>%</small>
                     </div>
                     <div class="card-icon bg-light rounded-circle p-3">
@@ -90,7 +90,7 @@ $conversion = $totalSolicitudes > 0 ? round(($aceptadas / $totalSolicitudes) * 1
                   <div class="d-flex justify-content-between align-items-center">
                     <div>
                       <h6 class="text-muted mb-2">Solicitudes pendientes</h6>
-                      <h3 class="mb-0"><?= number_format($pendientes) ?></h3>
+                      <h3 class="mb-0" tabindex="0" aria-label="Solicitudes pendientes: <?= htmlspecialchars(number_format($pendientes)) ?>"><?= number_format($pendientes) ?></h3>
                       <small class="text-warning">Revisar con los locales</small>
                       <div class="small text-muted">Rechazadas <?= number_format($rechazadas) ?></div>
                     </div>
@@ -108,7 +108,7 @@ $conversion = $totalSolicitudes > 0 ? round(($aceptadas / $totalSolicitudes) * 1
                   <div class="d-flex justify-content-between align-items-center">
                     <div>
                       <h6 class="text-muted mb-2">Clientes unicos</h6>
-                      <h3 class="mb-0"><?= number_format($clientesUnicos) ?></h3>
+                      <h3 class="mb-0" tabindex="0" aria-label="Clientes únicos: <?= htmlspecialchars(number_format($clientesUnicos)) ?>"><?= number_format($clientesUnicos) ?></h3>
                       <small class="text-muted">Clientes que usaron al menos una promo</small>
                     </div>
                     <div class="card-icon bg-light rounded-circle p-3">

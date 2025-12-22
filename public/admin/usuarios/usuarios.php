@@ -54,7 +54,7 @@ $totalPaginas = ceil($totalRegistros / $porPagina);
             <div class="card text-center shadow-sm border-0">
               <div class="card-body">
                 <i class="fas fa-user-clock fa-2x text-warning mb-2"></i>
-                <h4 class="fw-bold"><?= $duenosPendientes->num_rows ?></h4>
+                <h4 class="fw-bold" tabindex="0" aria-label="Pendientes de aprobación: <?= htmlspecialchars($duenosPendientes->num_rows) ?>"><?= $duenosPendientes->num_rows ?></h4>
                 <p class="text-muted mb-0">Pendientes de Aprobación</p>
               </div>
             </div>

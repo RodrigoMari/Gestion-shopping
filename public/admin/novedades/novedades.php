@@ -11,6 +11,7 @@ $totalRegistros = contarTodasNovedades($conn);
 $totalPaginas = ceil($totalRegistros / $porPagina);
 
 $novedadesVigentes = obtenerNovedadesVigentes($conn);
+$novedadesCount = is_object($novedades) ? $novedades->num_rows : 0;
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -61,16 +62,7 @@ $novedadesVigentes = obtenerNovedadesVigentes($conn);
             <div class="card text-center shadow-sm border-0">
               <div class="card-body">
                 <i class="fas fa-calendar-check fa-2x text-warning mb-2"></i>
-                <h4 class="fw-bold">
-                  <?php
-                  if (is_object($novedades)) {
-                    echo $novedades->num_rows;
-                    $novedades->data_seek(0); // Reset pointer
-                  } else {
-                    echo '0';
-                  }
-                  ?>
-                </h4>
+                <h4 class="fw-bold" tabindex="0" aria-label="Novedades Totales: <?= htmlspecialchars($novedadesCount) ?>"><?= $novedadesCount ?></h4>
                 <p class="text-muted mb-0">Novedades Totales</p>
               </div>
             </div>
@@ -79,7 +71,7 @@ $novedadesVigentes = obtenerNovedadesVigentes($conn);
             <div class="card text-center shadow-sm border-0">
               <div class="card-body">
                 <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
-                <h4 class="fw-bold"><?= $novedadesVigentes->num_rows ?></h4>
+                <h4 class="fw-bold" tabindex="0" aria-label="Novedades activas: <?= htmlspecialchars($novedadesVigentes->num_rows) ?>"><?= $novedadesVigentes->num_rows ?></h4>
                 <p class="text-muted mb-0">Novedades Activas</p>
               </div>
             </div>
@@ -88,7 +80,7 @@ $novedadesVigentes = obtenerNovedadesVigentes($conn);
             <div class="card text-center shadow-sm border-0">
               <div class="card-body">
                 <i class="fas fa-tags fa-2x text-info mb-2"></i>
-                <h4 class="fw-bold">--</h4>
+                <h4 class="fw-bold" aria-hidden="true">--</h4>
                 <p class="text-muted mb-0">Rubros</p>
               </div>
             </div>
@@ -97,7 +89,7 @@ $novedadesVigentes = obtenerNovedadesVigentes($conn);
             <div class="card text-center shadow-sm border-0">
               <div class="card-body">
                 <i class="fas fa-users fa-2x text-primary mb-2"></i>
-                <h4 class="fw-bold">--</h4>
+                <h4 class="fw-bold" aria-hidden="true">--</h4>
                 <p class="text-muted mb-0">Propietarios</p>
               </div>
             </div>
@@ -142,8 +134,8 @@ $novedadesVigentes = obtenerNovedadesVigentes($conn);
                         <td class="text-muted"><?= htmlspecialchars($novedad['tipoUsuario']) ?></td>
                         <td class="text-center">
                           <div class="d-flex flex-column flex-md-row justify-content-center gap-2">
-                            <a href="edit.php?id=<?= $novedad['codNovedad'] ?>" class="btn btn-sm btn-outline-warning" title="Editar">
-                              <i class="fas fa-edit"></i>
+                            <a href="edit.php?id=<?= $novedad['codNovedad'] ?>" class="btn btn-sm btn-outline-warning" title="Editar" aria-label="Editar novedad <?= htmlspecialchars($novedad['textoNovedad']) ?>">
+                              <i class="fas fa-edit" aria-hidden="true"></i>
                             </a>
                             <form method="POST" action="<?= SRC_URL ?>novedades/delete.php" class="m-0">
                               <input type="hidden" name="id_novedad" value="<?= $novedad['codNovedad'] ?>">

@@ -13,6 +13,7 @@ $totalPaginas = ceil($totalRegistros / $porPagina);
 
 $propietariosCount = getLocalesPropietariosCount($conn);
 $rubrosCount = getLocalesRubrosCount($conn);
+$localesCount = is_object($locales) ? $locales->num_rows : 0;
 
 ?>
 <!DOCTYPE html>
@@ -64,16 +65,7 @@ $rubrosCount = getLocalesRubrosCount($conn);
             <div class="card text-center shadow-sm border-0">
               <div class="card-body">
                 <i class="fas fa-store fa-2x text-warning mb-2"></i>
-                <h4 class="fw-bold">
-                  <?php
-                  if (is_object($locales)) {
-                    echo $locales->num_rows;
-                    $locales->data_seek(0);
-                  } else {
-                    echo '0';
-                  }
-                  ?>
-                </h4>
+                <h4 class="fw-bold" tabindex="0" aria-label="Locales Totales: <?= htmlspecialchars($localesCount) ?>"><?= $localesCount ?></h4>
                 <p class="text-muted mb-0">Locales Totales</p>
               </div>
             </div>
@@ -82,7 +74,7 @@ $rubrosCount = getLocalesRubrosCount($conn);
             <div class="card text-center shadow-sm border-0">
               <div class="card-body">
                 <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
-                <h4 class="fw-bold">--</h4>
+                <h4 class="fw-bold" aria-hidden="true">--</h4>
                 <p class="text-muted mb-0">Locales Activos</p>
               </div>
             </div>
@@ -91,7 +83,7 @@ $rubrosCount = getLocalesRubrosCount($conn);
             <div class="card text-center shadow-sm border-0">
               <div class="card-body">
                 <i class="fas fa-tags fa-2x text-info mb-2"></i>
-                <h4 class="fw-bold"><?= $rubrosCount ?></h4>
+                <h4 class="fw-bold" tabindex="0" aria-label="Rubros: <?= htmlspecialchars($rubrosCount) ?>"><?= $rubrosCount ?></h4>
                 <p class="text-muted mb-0">Rubros</p>
               </div>
             </div>
@@ -100,7 +92,7 @@ $rubrosCount = getLocalesRubrosCount($conn);
             <div class="card text-center shadow-sm border-0">
               <div class="card-body">
                 <i class="fas fa-users fa-2x text-primary mb-2"></i>
-                <h4 class="fw-bold"><?= $propietariosCount ?></h4>
+                <h4 class="fw-bold" tabindex="0" aria-label="Propietarios: <?= htmlspecialchars($propietariosCount) ?>"><?= $propietariosCount ?></h4>
                 <p class="text-muted mb-0">Propietarios</p>
               </div>
             </div>
@@ -148,19 +140,27 @@ $rubrosCount = getLocalesRubrosCount($conn);
                         </td>
                         <td class="text-muted"><?= $dueno['nombreUsuario'] ?></td>
                         <td class="text-center">
-                          <div class="btn-group" role="group">
-                            <a href="edit.php?id=<?= $local['codLocal'] ?>" class="btn btn-sm btn-outline-warning" title="Editar">
-                              <i class="fas fa-edit"></i>
+                          <div class="btn-group" role="group" aria-label="Acciones para <?= htmlspecialchars($local['nombreLocal']) ?>">
+                            
+                            <a href="edit.php?id=<?= $local['codLocal'] ?>" 
+                              class="btn btn-sm btn-outline-warning" 
+                              title="Editar"
+                              aria-label="Editar local <?= htmlspecialchars($local['nombreLocal']) ?>">
+                              <i class="fas fa-edit" aria-hidden="true"></i>
                             </a>
-                            <!-- <a href="delete.php?id=<?= $local['codLocal'] ?>" class="btn btn-sm btn-outline-danger" title="Eliminar" onclick="return confirm('¿Estás seguro de que quieres eliminar este local?')">
-                              <i class="fas fa-trash"></i>
-                            </a> -->
+
                             <form method="POST" action="<?= SRC_URL ?>locales/delete.php" style="display:inline;">
                               <input type="hidden" name="id_local" value="<?= $local['codLocal'] ?>">
-                              <button type="submit" class="btn btn-sm btn-outline-danger" title="Eliminar" onclick="return confirm('¿Estás seguro de que quieres eliminar este local?')">
-                                <i class="fas fa-trash"></i>
+                              
+                              <button type="submit" 
+                                      class="btn btn-sm btn-outline-danger" 
+                                      title="Eliminar" 
+                                      aria-label="Eliminar local <?= htmlspecialchars($local['nombreLocal']) ?>"
+                                      onclick="return confirm('¿Estás seguro de que quieres eliminar este local?')">
+                                <i class="fas fa-trash" aria-hidden="true"></i>
                               </button>
                             </form>
+                            
                           </div>
                         </td>
                       </tr>
